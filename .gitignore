@@ -1,0 +1,20 @@
+# Secrets — never commit
+.env
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+
+# Build / generated artifacts
+output_chart.png
+site/                 # mkdocs build output
+*.egg-info/
+
+# OS / editor
+.DS_Store

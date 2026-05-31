@@ -1,0 +1,42 @@
+schemaVersion: 2.2.0
+metadata:
+  name: playbox-try-an-llm
+  description: Try an LLM in the Polestar Playbox — DevPod-ready starter template.
+components:
+  - name: tools
+    container:
+      image: mcr.microsoft.com/devcontainers/universal:2-linux
+      memoryLimit: 4G
+      command: ['sleep', 'infinity']
+      env:
+        # Real values injected by the cluster / vault in the Playbox. Placeholders only.
+        - name: AZURE_OPENAI_ENDPOINT
+          value: ""
+        - name: AZURE_OPENAI_API_KEY
+          value: ""
+      endpoints:
+        # Pre-forward every demo service port so users never hand-configure them.
+        - name: pm-ui
+          targetPort: 8501       # Streamlit PM UI
+          exposure: public
+        - name: docs
+          targetPort: 8000       # mkdocs serve
+          exposure: public
+        - name: react-ui
+          targetPort: 5173       # Vite dev server
+          exposure: public
+commands:
+  - id: install-kilo-code
+    exec:
+      component: tools
+      commandLine: "bash ${PROJECT_SOURCE}/.devpod/install-kilo-code.sh"
+      workingDir: ${PROJECT_SOURCE}
+  - id: init
+    exec:
+      component: tools
+      commandLine: "bash ${PROJECT_SOURCE}/scripts/init.sh"
+      workingDir: ${PROJECT_SOURCE}
+events:
+  postStart:
+    - install-kilo-code
+    - init

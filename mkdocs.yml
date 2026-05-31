@@ -1,0 +1,34 @@
+site_name: Polestar Playbox — Try an LLM
+docs_dir: docs
+theme:
+  name: material
+  palette:
+    scheme: slate
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - toc.follow
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Environment: getting-started/environment.md
+    - Agents as Code: getting-started/agents.md
+  - Models & Routing: models.md
+  - Demos:
+    - PM UI Playground: demos/pm-ui.md
+    - Orchestrator (Planning + Delegation): demos/orchestrator.md
+    - GitLab Issue Summarizer: demos/gitlab-agent.md
+    - RAG with Embeddings: demos/rag-embeddings.md
+    - Data Analysis: demos/data-analysis.md
+    - Audio Transcription: demos/transcription.md
+    - React UI Generation: demos/react-ui.md
+  - Decisions: adr/ADR-0001.md
+
+markdown_extensions:
+  - pymdownx.superfences
+  - pymdownx.details
+  - pymdownx.tabbed
+  - tables
+  - codehilite
+  - toc

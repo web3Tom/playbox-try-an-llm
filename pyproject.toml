@@ -1,0 +1,22 @@
+[project]
+name = "playbox-try-an-llm"
+version = "0.1.0"
+description = "Polestar Playbox 'Try an LLM' starter template — DevPod-ready entry point for the enterprise AI sandbox."
+requires-python = ">=3.11"
+dependencies = [
+    "openai>=1.30",
+    "streamlit>=1.35",
+    "chromadb>=0.5",
+    "httpx>=0.27",
+    "pandas>=2.2",
+    "matplotlib>=3.9",
+    "python-dotenv>=1.0",
+]
+
+[dependency-groups]
+docs = [
+    "mkdocs-material>=9.5",
+]
+
+[tool.uv]
+package = false

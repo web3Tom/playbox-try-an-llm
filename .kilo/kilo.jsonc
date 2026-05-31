@@ -1,0 +1,48 @@
+// Kilo Code provider + model configuration for the Polestar Playbox.
+//
+// This file pins each role to a specific Azure-deployed model through the
+// Playbox APIM gateway. The verified, working values for the real gateway live
+// in your DevPod's harness config and are injected at runtime — DO NOT commit a
+// real APIM hostname or key here. This template ships placeholders only.
+//
+// baseUrl + apiKey come from the environment (.env). Kilo reads the provider's
+// `baseUrl`/`apiKey` from these env vars in the Playbox image.
+{
+  "provider": {
+    "id": "playbox-apim",
+    "type": "openai-compatible",
+    // Real value is injected by the Playbox image / .env — placeholder here.
+    "baseUrl": "${AZURE_OPENAI_ENDPOINT}", // e.g. https://<your-playbox-apim-endpoint>/playbox-ai-deployment/openai
+    "apiKey": "${AZURE_OPENAI_API_KEY}",
+    "apiVersion": "2024-02-15-preview"
+  },
+
+  // One profile per role. The `limit` block is the per-REQUEST budget:
+  //   - context = input + output combined (the deployment's context window)
+  //   - output  = max_completion_tokens (reasoning + visible answer COMBINED)
+  // For reasoning models (gpt-5.4) reasoning tokens are billed from `output`,
+  // so the orchestrator's output cap is raised to 32,768. See docs/adr/ADR-0001.md.
+  "profiles": {
+    "orchestrator": {
+      "model": "gpt-5.4",
+      "reasoningEffort": "high",
+      "limit": { "context": 128000, "output": 32768 }
+    },
+    "everyday-dev": {
+      // gpt-5.4-mini is NOT yet deployed — fall back to gpt-5.2.
+      "model": "gpt-5.2",
+      "reasoningEffort": "low",
+      "limit": { "context": 128000, "output": 8000 }
+    },
+    "summarizer": {
+      // gpt-5.4-nano is NOT yet deployed — fall back to gpt-5-nano.
+      "model": "gpt-5-nano",
+      "reasoningEffort": "minimal",
+      "limit": { "context": 128000, "output": 4000 }
+    }
+  },
+
+  // No external internet egress. Only the Playbox APIM gateway and internal
+  // GitLab are reachable; everything else is assumed blocked.
+  "mcp": {}
+}
