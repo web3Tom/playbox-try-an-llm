@@ -47,9 +47,9 @@ playbox-try-an-llm/
 ├── .kilo/                  -> Kilo Code agent config (the only scaffolded agent surface)
 │   ├── agents/             -> per-role definitions, each pinned to a model
 │   │   ├── orchestrator.md     -> gpt-5.4 (planning/delegation, reasoning)
-│   │   ├── everyday-dev.md     -> gpt-5.4-mini / gpt-5.2 fallback
-│   │   ├── summarizer.md       -> gpt-5.4-nano / gpt-5-nano fallback
-│   │   └── react-frontend.md   -> UI-domain role (everyday-dev route)
+│   │   ├── everyday-dev.md     -> gpt-5.4-mini (workhorse)
+│   │   ├── summarizer.md       -> gpt-5.4-nano
+│   │   └── react-frontend.md   -> gpt-5.2 (fallback gpt-5.4-mini)
 │   ├── rules/              -> always-on global rules (general.md)
 │   ├── skills/             -> deterministic tool definitions (SWE-agent / agent-skills patterns)
 │   ├── commands/           -> reusable slash commands
@@ -60,7 +60,7 @@ playbox-try-an-llm/
 │   ├── orchestrator/       -> planner + sub-agent delegation
 │   ├── gitlab-agent/       -> GitLab API integration via PAT
 │   ├── react-ui/           -> Vite+React frontend generation (scaffold exercise)
-│   ├── transcription/      -> gpt-4o-transcribe-diarize (audio; not yet deployed)
+│   ├── transcription/      -> gpt-4o-transcribe-diarize (audio / diarization)
 │   ├── rag-embeddings/     -> local in-memory vector search (text-embedding-3-large)
 │   └── data-analysis/      -> pandas over a mock CSV
 ├── specs/                  -> Spec-Kit-style specs (Constitution -> Spec -> Plan -> Impl)
@@ -78,19 +78,19 @@ playbox-try-an-llm/
 
 ## Heuristics — model routing (the core lesson)
 
-| When | Use | Availability |
-|------|-----|--------------|
-| Multi-step planning / orchestration | `gpt-5.4` (reasoning) | Deployed |
-| Everyday dev / coding (workhorse) | `gpt-5.4-mini` | **NOT yet deployed** — fall back to `gpt-5.2` |
-| Summarization / quick classification | `gpt-5.4-nano` | **NOT yet deployed** — fall back to `gpt-5-nano` |
-| Audio / transcription demo | `gpt-4o-transcribe-diarize` | **NOT yet deployed** |
-| RAG / embeddings demo | `text-embedding-3-large` | **NOT yet deployed** |
+| When | Use | Note |
+|------|-----|------|
+| Multi-step planning / orchestration | `gpt-5.4` (reasoning) | High cost — route sparingly |
+| Everyday dev / coding (workhorse) | `gpt-5.4-mini` | Default for routine implementation |
+| UI / frontend work | `gpt-5.2` | Fallback `gpt-5.4-mini` for harder reasoning |
+| Summarization / quick classification | `gpt-5.4-nano` | Lowest latency / cost |
+| Audio / transcription demo | `gpt-4o-transcribe-diarize` | Specialized audio / diarization model |
+| RAG / embeddings demo | `text-embedding-3-large` | Retrieval embeddings |
 | Adding a dependency | Ask first — keep the template lean | — |
 
 > Routing is the point of this template: never default to `gpt-5.4` for everything. `gpt-5.4`
 > is a reasoning model — reasoning tokens share the per-request output budget, so its output
-> cap is raised to 32,768 (see `docs/adr/ADR-0001.md`). If a target model is not yet deployed,
-> use its documented fallback and note the substitution.
+> cap is raised to 32,768 (see `docs/adr/ADR-0001.md`).
 
 ## Boundaries
 

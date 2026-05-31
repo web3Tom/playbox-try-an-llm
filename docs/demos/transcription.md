@@ -6,7 +6,7 @@ Transcribe audio files with **speaker identification and timestamps** using mult
 
 This demo:
 1. Takes an audio file (MP3, WAV, M4A, etc.)
-2. Sends it to **gpt-4o-transcribe-diarize** (when deployed) or falls back to **gpt-4o**
+2. Sends it to **gpt-4o-transcribe-diarize**
 3. Returns a transcript with:
    - Speaker labels (Speaker A, Speaker B, etc.)
    - Timestamps for each segment
@@ -33,21 +33,6 @@ Learn:
 - Batch transcription for meetings and recordings
 - When to use gpt-4o vs cheaper alternatives
 
-## Current Status
-
-**Note:** `gpt-4o-transcribe-diarize` is **not yet deployed**. The demo uses `gpt-4o` as fallback.
-
-When `gpt-4o-transcribe-diarize` deploys, update `.kilo/kilo.jsonc`:
-```jsonc
-{
-  "deployments": {
-    "gpt-4o-transcribe-diarize": "your-org-gpt-4o-transcribe-diarize"
-  }
-}
-```
-
-The code will automatically route to the specialized model.
-
 ## How to Run
 
 ```bash
@@ -60,7 +45,7 @@ $ uv run python demos/transcription/main.py --input demos/transcription/audio/sa
 
 Loading audio file: demos/transcription/audio/sample_meeting.mp3
 Duration: 2 minutes 15 seconds
-Sending to gpt-4o (fallback)...
+Sending to gpt-4o-transcribe-diarize...
 ✓ Transcription complete
 
 Transcript:
@@ -112,11 +97,9 @@ demos/transcription/
 
 For audio transcription:
 
-- **gpt-4o-transcribe-diarize** (when deployed): Specialized, optimized for speaker detection
-- **gpt-4o** (current fallback): General multimodal, works but slower for audio
+- **gpt-4o-transcribe-diarize**: Specialized, optimized for speaker detection and timestamps
+- **gpt-4o**: General multimodal — an option for plain audio without diarization
 - **Don't use:** gpt-5.4 (no audio support), gpt-5.2 (no audio support)
-
-The fallback is **transparent** — no code changes needed when the specialized model deploys.
 
 ## Extending This Demo
 

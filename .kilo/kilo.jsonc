@@ -29,16 +29,21 @@
       "limit": { "context": 128000, "output": 32768 }
     },
     "everyday-dev": {
-      // gpt-5.4-mini is NOT yet deployed — fall back to gpt-5.2.
-      "model": "gpt-5.2",
+      "model": "gpt-5.4-mini",
       "reasoningEffort": "low",
       "limit": { "context": 128000, "output": 8000 }
     },
     "summarizer": {
-      // gpt-5.4-nano is NOT yet deployed — fall back to gpt-5-nano.
-      "model": "gpt-5-nano",
+      "model": "gpt-5.4-nano",
       "reasoningEffort": "minimal",
       "limit": { "context": 128000, "output": 4000 }
+    },
+    "react-frontend": {
+      // UI specialist: gpt-5.2 by default, escalate to gpt-5.4-mini for harder reasoning.
+      "model": "gpt-5.2",
+      "fallback": "gpt-5.4-mini",
+      "reasoningEffort": "low",
+      "limit": { "context": 128000, "output": 8000 }
     }
   },
 

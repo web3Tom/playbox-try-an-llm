@@ -14,21 +14,19 @@ These models are live and ready to use:
 | **gpt-5-nano** | Fast, lightweight reasoning | Low-Medium | Summarization, classification |
 | **gpt-5-mini** | Fast, compact | Low | Lightweight tasks, quick edits |
 | **gpt-5** | General-purpose | Low-Medium | Conversational, exploratory work |
-| **gpt-4o** | Multimodal (text, images, audio) | Medium | PM UI, chat, transcription (until gpt-4o-transcribe-diarize deploys) |
+| **gpt-4o** | Multimodal (text, images, audio) | Medium | PM UI, chat, image analysis |
 | **gpt-4o-mini** | Lightweight multimodal | Low | Quick image analysis, small tasks |
 
-## Not Yet Deployed (With Fallbacks)
+## Specialized Models
 
-These models have documented fallback routes:
+These task-specific models are also live:
 
-| Model | Status | Fallback | Use Case |
-|-------|--------|----------|----------|
-| `gpt-5.4-mini` | Planned | `gpt-5.2` | Lightweight reasoning + cost savings |
-| `gpt-5.4-nano` | Planned | `gpt-5-nano` | Ultra-fast reasoning for quick decisions |
-| `gpt-4o-transcribe-diarize` | Planned | `gpt-4o` | Audio transcription with speaker tracking |
-| `text-embedding-3-large` | Planned | (use ChromaDB in-memory; embeddings from gpt-4o) | RAG with semantic search |
-
-When a model is not deployed, Kilo Code automatically routes to the fallback. You don't need to change your code — the fallback is transparent.
+| Model | Capability | Use Case |
+|-------|-----------|----------|
+| `gpt-5.4-mini` | Fast reasoning + cost savings | The everyday-dev workhorse |
+| `gpt-5.4-nano` | Ultra-fast, lowest cost | Summarization, quick classification |
+| `gpt-4o-transcribe-diarize` | Audio transcription with speaker tracking | The transcription demo |
+| `text-embedding-3-large` | High-dimensional embeddings | RAG with semantic search |
 
 ## Routing Decision Matrix
 
@@ -37,14 +35,15 @@ When a model is not deployed, Kilo Code automatically routes to the fallback. Yo
 | Task Type | Primary Model | Reasoning | Cost |
 |-----------|---------------|-----------|------|
 | **Orchestration, Planning** | gpt-5.4 | Reasoning model; breaks down complex problems | High |
-| **Feature Implementation** | gpt-5.4-mini (→gpt-5.2) | Fast coding, still strong at logic | Medium |
+| **Feature Implementation** | gpt-5.4-mini | Fast coding, still strong at logic | Medium |
 | **Bug Fixes, Code Review** | gpt-5.2 | Balanced speed and reasoning | Medium-High |
-| **Quick Classification** | gpt-5.4-nano (→gpt-5-nano) | Fast summarization, no deep reasoning needed | Low |
+| **UI / Frontend Work** | gpt-5.2 (fallback gpt-5.4-mini) | Component generation; escalate for complex logic | Medium |
+| **Quick Classification** | gpt-5.4-nano | Fast summarization, no deep reasoning needed | Low |
 | **General Chat, Exploration** | gpt-5 | Conversational, exploratory | Low-Medium |
 | **Images, Charts, Mockups** | gpt-4o | Sees visual context; generates designs | Medium |
 | **Quick Image Checks** | gpt-4o-mini | Lightweight vision | Low |
-| **Audio Transcription** | gpt-4o-transcribe-diarize (→gpt-4o) | Speaker detection, timestamps | Medium |
-| **RAG Document Retrieval** | text-embedding-3-large (→ChromaDB) | Semantic search over stored documents | Low-Medium |
+| **Audio Transcription** | gpt-4o-transcribe-diarize | Speaker detection, timestamps | Medium |
+| **RAG Document Retrieval** | text-embedding-3-large | Semantic search over stored documents | Low-Medium |
 
 ## Why gpt-5.4 is Special: Reasoning Tokens
 
@@ -93,21 +92,23 @@ Use gpt-5.4 for everything (too expensive, overkill for summarization).
 
 **Total cost:** ~70% less than routing all to gpt-5.4, **same result**.
 
-## Fallback Strategy
+## Deliberate Fallbacks
 
-If a deployment is not available, your code doesn't break — Kilo Code transparently uses the fallback:
+A role can define a deliberate fallback — a second model to escalate to when the primary
+isn't the right fit. The `react-frontend` role uses this: `gpt-5.2` by default, escalating to
+`gpt-5.4-mini` for harder reasoning.
 
 ```jsonc
 // In .kilo/kilo.jsonc
-"gpt-5.4-mini": {
-  "deployment": "gpt-54-mini",
-  "fallback": "gpt-52"
+"react-frontend": {
+  "model": "gpt-5.2",
+  "fallback": "gpt-5.4-mini"
 }
 ```
 
-Your agent role still says `Model: gpt-5.4-mini`, but the actual call goes to `gpt-5.2` until the primary is deployed.
+This is a routing choice, not a deployment workaround — every model in the suite is live.
 
-## Checking Deployment Status
+## Checking Your Endpoint
 
 Before you run a demo, you can verify your endpoint is reachable:
 
@@ -116,7 +117,7 @@ curl -H "Authorization: Bearer ${AZURE_OPENAI_API_KEY}" \
   "${AZURE_OPENAI_ENDPOINT}/openai/deployments?api-version=2024-08-01-preview"
 ```
 
-This returns a list of active deployments. If a model name is missing, the fallback will be used automatically.
+This returns a list of active deployments so you can confirm the model your role pins is present.
 
 ---
 

@@ -20,10 +20,11 @@ Match the model to the job — never default everything to the most powerful mod
 | Task | Model | Note |
 |------|-------|------|
 | Multi-step planning / orchestration | `gpt-5.4` | Reasoning model; high cost — route sparingly |
-| Everyday dev / coding | `gpt-5.4-mini` | Not yet deployed → fall back to `gpt-5.2` |
-| Summarization / quick classification | `gpt-5.4-nano` | Not yet deployed → fall back to `gpt-5-nano` |
-| Audio / transcription | `gpt-4o-transcribe-diarize` | Not yet deployed |
-| RAG / embeddings | `text-embedding-3-large` | Not yet deployed |
+| Everyday dev / coding | `gpt-5.4-mini` | The workhorse for routine implementation |
+| UI / frontend work | `gpt-5.2` | Fallback `gpt-5.4-mini` for harder reasoning |
+| Summarization / quick classification | `gpt-5.4-nano` | Lowest latency and cost |
+| Audio / transcription | `gpt-4o-transcribe-diarize` | Specialized audio / diarization model |
+| RAG / embeddings | `text-embedding-3-large` | Embeddings for retrieval |
 
 `gpt-5.4` is a **reasoning model**: reasoning tokens are spent from the same per-request
 output budget as the visible answer. Size both the output cap and reasoning effort to the

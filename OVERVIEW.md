@@ -29,19 +29,17 @@ The target initiative is the "Polestar Playbox," an internal-facing enterprise A
 
     - `gpt-5.4` (Orchestration / planning — **reasoning model**)
 
-    - `gpt-5.4-mini` / `gpt-5.2` fallback (Everyday dev)
+    - `gpt-5.4-mini` (Everyday dev)
 
-    - `gpt-5.4-nano` / `gpt-5-nano` fallback (Summarization)
+    - `gpt-5.4-nano` (Summarization)
 
     - `gpt-4o-transcribe-diarize` (Audio processing)
 
     - `text-embedding-3-large` (RAG / embeddings)
 
-    > **Deployment status (per the project spec §2):** `gpt-5.4`, `gpt-5.2`, `gpt-5.1`,
-    > `gpt-5-nano`, `gpt-5-mini`, `gpt-5`, `gpt-4o`, `gpt-4o-mini` are **deployed now**.
-    > `gpt-5.4-mini`, `gpt-5.4-nano`, `gpt-4o-transcribe-diarize`, and `text-embedding-3-large`
-    > are **not yet deployed** — the routing config uses the documented fallback and notes the
-    > substitution until they land.
+    > **All models are deployed and live:** `gpt-5.4`, `gpt-5.2`, `gpt-5.1`, `gpt-5-nano`,
+    > `gpt-5-mini`, `gpt-5`, `gpt-4o`, `gpt-4o-mini`, `gpt-5.4-mini`, `gpt-5.4-nano`,
+    > `gpt-4o-transcribe-diarize`, and `text-embedding-3-large`.
 
 - **IDE Extension:** **Kilo Code** is the scaffolded agent surface (`.kilo/`). **Cline** and
   **Codex** are documented as supported alternatives only — each reads its own config directory,
@@ -100,9 +98,9 @@ polestar-playbox-template/
 ├── .kilo/                      # Agent Configuration (Kilo Code)
 │   ├── agents/                 # Per-role definitions, each pinned to a model
 │   │   ├── orchestrator.md     # -> gpt-5.4 (reasoning; planning/delegation)
-│   │   ├── everyday-dev.md     # -> gpt-5.4-mini / 5.2 fallback
-│   │   ├── summarizer.md       # -> gpt-5.4-nano / gpt-5-nano fallback
-│   │   └── react-frontend.md   # Domain-specific UI role (everyday-dev route)
+│   │   ├── everyday-dev.md     # -> gpt-5.4-mini (workhorse)
+│   │   ├── summarizer.md       # -> gpt-5.4-nano
+│   │   └── react-frontend.md   # -> gpt-5.2 (fallback gpt-5.4-mini)
 │   ├── rules/                  # Always-on global rules (general.md)
 │   ├── skills/                 # Custom tool definitions
 │   ├── commands/               # Reusable slash commands
@@ -451,7 +449,7 @@ Always review the output of your sub-agents before declaring a task complete.
 ```markdown
 # Role: React Frontend Developer
 You are an expert ReactJS developer. You focus on building clean, responsive UI components.
-Use the `gpt-5.4-mini` model for rapid UI iterations (falls back to `gpt-5.2` until mini is deployed).
+Use the `gpt-5.2` model for rapid UI iterations (fallback `gpt-5.4-mini` for harder reasoning).
 Always prefer functional components and React Hooks.
 If you need complex logic or state management, you may request the user to switch to `gpt-5.4`.
 ```
@@ -460,7 +458,7 @@ If you need complex logic or state management, you may request the user to switc
 ```markdown
 # Role: Content Summarizer
 You are a fast, efficient summarization engine.
-You MUST strictly use the `gpt-5.4-nano` model (falls back to `gpt-5-nano` until nano is deployed).
+You MUST strictly use the `gpt-5.4-nano` model.
 Provide concise, bulleted summaries of provided text, code, or transcripts. Focus only on the core facts and action items.
 ```
 
@@ -474,9 +472,9 @@ We have pre-configured roles in the `.kilo/agents/` directory.
 
 ### Available Models in the Playbox:
 *   **GPT-5.4:** The heavyweight reasoning model. Best for complex logic, orchestration, and planning — route sparingly.
-*   **GPT-5.4-mini:** The daily driver. Fast, capable, great for standard coding (not yet deployed → fall back to GPT-5.2).
-*   **GPT-5.4-nano:** The speedster. Quick summaries and simple text manipulation (not yet deployed → fall back to GPT-5-nano).
-*   **GPT-5.2 (Fallback):** Reliable model for general tasks.
+*   **GPT-5.4-mini:** The daily driver. Fast, capable, great for standard coding.
+*   **GPT-5.4-nano:** The speedster. Quick summaries and simple text manipulation.
+*   **GPT-5.2:** Reliable model for general tasks and UI/frontend work.
 *   **GPT-4o-Transcribe-Diarize:** Specialized for audio processing.
 *   **Text-Embedding-3-Large:** Used for semantic search and RAG applications.
 
@@ -537,7 +535,7 @@ audio_file_path = "sample_audio.mp4"
 
 print(f"Sending {audio_file_path} to the gpt-4o-transcribe-diarize endpoint...")
 
-# Example API call (endpoint not yet deployed — illustrative)
+# Example API call
 # response = client.audio.transcriptions.create(
 #     model="gpt-4o-transcribe-diarize",
 #     file=open(audio_file_path, "rb")

@@ -26,9 +26,9 @@ If either variable is missing, the UI displays a warning and does not crash.
 
 Choose from:
 - `gpt-5.4` — Full reasoning model (planning, orchestration)
-- `gpt-5.4-mini` — Lightweight reasoning (everyday dev, summarization fallback)
-- `gpt-5.4-nano` — Ultra-lightweight (summarization, fallback)
-- `gpt-5.2` — Standard model (fallback for mini/nano if unavailable)
+- `gpt-5.4-mini` — Lightweight reasoning (everyday-dev workhorse)
+- `gpt-5.4-nano` — Ultra-lightweight (summarization, quick classification)
+- `gpt-5.2` — Standard model (UI/frontend work, general tasks)
 
 ## Conversation History
 

@@ -56,12 +56,8 @@ plus a matching page in the docs site. They are ordered roughly easiest → most
 | **gitlab-agent** | Enterprise API integration — read & summarize project issues via a GitLab PAT | `gpt-5.4-mini` | `uv run python demos/gitlab-agent/review_issues.py` |
 | **rag-embeddings** | Ground answers in your own docs with an in-memory vector store (no external DB) | `text-embedding-3-large` | `uv run python demos/rag-embeddings/rag_query.py` |
 | **data-analysis** | Agent-written pandas over a mock CSV; produces `output_chart.png` | `gpt-5.4` (to generate logic) | `uv run python demos/data-analysis/analyze_data.py` |
-| **transcription** | Audio diarization/transcription *(endpoint not yet deployed — illustrative)* | `gpt-4o-transcribe-diarize` | `uv run python demos/transcription/transcribe.py` |
-| **react-ui** | Dev-track exercise: scaffold a Vite+React app governed by a Kilo role file | `gpt-5.4-mini` (`react-frontend` role) | see `demos/react-ui/README.md` |
-
-> Some demos call models that are **not yet deployed** (`gpt-5.4-mini`, `gpt-5.4-nano`,
-> `gpt-4o-transcribe-diarize`, `text-embedding-3-large`). The scripts target the *intended* route
-> to teach correct routing; until those land, use the documented fallbacks in `docs/models.md`.
+| **transcription** | Audio transcription with speaker diarization | `gpt-4o-transcribe-diarize` | `uv run python demos/transcription/transcribe.py` |
+| **react-ui** | Runnable Vite+React app (theme toggle + model-routing card) governed by a Kilo role file | `gpt-5.2` (`react-frontend` role) | `cd demos/react-ui && npm install && npm run dev` (port 5173) |
 
 ## Layout
 
@@ -84,6 +80,4 @@ plus a matching page in the docs site. They are ordered roughly easiest → most
 - **Never push to `main`.** `scripts/init.sh` moves you to a `sandbox/<user>-<timestamp>`
   branch; integrate via merge request.
 
-Some models (`gpt-5.4-mini`, `gpt-5.4-nano`, `gpt-4o-transcribe-diarize`, `text-embedding-3-large`)
-are **not yet deployed** — the routing config falls back to deployed equivalents and notes the
-substitution. See `docs/models.md`.
+All models in the suite are deployed and live. See `docs/models.md` for the full routing matrix.

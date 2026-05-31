@@ -8,8 +8,8 @@ The Playbox treats agent configuration as **declarative, version-controlled code
 .kilo/
 ├── agents/
 │   ├── orchestrator.md          # Planner role (gpt-5.4)
-│   ├── developer.md             # Everyday coding (gpt-5.4-mini or fallback)
-│   ├── react-frontend.md        # React scaffold role (gpt-5.4-mini)
+│   ├── everyday-dev.md          # Everyday coding (gpt-5.4-mini)
+│   ├── react-frontend.md        # React scaffold role (gpt-5.2, fallback gpt-5.4-mini)
 │   ├── summarizer.md            # Quick classification (gpt-5.4-nano)
 │   └── ...
 ├── rules/
@@ -73,7 +73,7 @@ for orchestration only. Route everyday coding to the developer role.
 ```markdown
 # Developer
 
-Model: gpt-5.4-mini (fallback: gpt-5.2)
+Model: gpt-5.4-mini
 
 ## Purpose
 You implement features, write tests, fix bugs, and refactor code.
@@ -137,14 +137,16 @@ The `.kilo/kilo.jsonc` file maps logical model names to your Azure OpenAI deploy
 }
 ```
 
-At startup, Kilo Code verifies that each deployment name resolves to a live endpoint. If a model is not yet deployed (e.g., `gpt-5.4-mini`), the config specifies a fallback:
+At startup, Kilo Code verifies that each deployment name resolves to a live endpoint. A role can
+also declare a deliberate fallback — a second model to escalate to (the `react-frontend` role uses
+`gpt-5.2` with a `gpt-5.4-mini` fallback):
 
 ```jsonc
 {
-  "deployments": {
-    "gpt-5.4-mini": {
-      "deployment": "your-org-gpt-54-mini-deployment",
-      "fallback": "your-org-gpt-52-deployment"
+  "profiles": {
+    "react-frontend": {
+      "model": "gpt-5.2",
+      "fallback": "gpt-5.4-mini"
     }
   }
 }

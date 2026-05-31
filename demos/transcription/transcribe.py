@@ -1,9 +1,8 @@
 """
 Audio transcription demo using Azure OpenAI's gpt-4o-transcribe-diarize endpoint.
 
-NOTE: The gpt-4o-transcribe-diarize endpoint is not yet deployed in this Azure environment.
-This script demonstrates the correct structure and API call; actual transcription will fail
-until the endpoint becomes available.
+Transcribes an audio file and returns text with speaker diarization. Point it at a real
+audio file via the `audio_file` path in main().
 
 Env vars:
   AZURE_OPENAI_ENDPOINT: Azure OpenAI deployment endpoint
@@ -62,11 +61,7 @@ def transcribe_audio(client: AzureOpenAI, audio_file_path: str) -> str:
         logger.error(f"File error: {e}")
         raise
     except APIError as e:
-        if "not deployed" in str(e).lower() or "not found" in str(e).lower():
-            logger.error("gpt-4o-transcribe-diarize endpoint is not yet deployed in this Azure environment.")
-            logger.info("This demo is illustrative. Endpoint availability: check Azure OpenAI deployment status.")
-            raise RuntimeError("Transcription endpoint not yet deployed.") from e
-        logger.error(f"API error: {e}")
+        logger.error(f"API error from the transcription endpoint: {e}")
         raise
     except Exception as e:
         logger.error(f"Unexpected error during transcription: {e}")
@@ -86,9 +81,6 @@ def main():
     try:
         result = transcribe_audio(client, audio_file)
         print(f"\nTranscription:\n{result}")
-    except RuntimeError as e:
-        logger.warning(f"Demo skipped: {e}")
-        print(f"⚠️  {e}")
     except Exception as e:
         logger.error(f"Transcription failed: {e}")
         raise

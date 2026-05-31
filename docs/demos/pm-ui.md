@@ -43,7 +43,7 @@ The app starts on **http://localhost:8501** (DevPod forwards the port automatica
 |-------|-------|----------|
 | gpt-5.4 | Yes | Planning, reasoning, high-stakes decisions |
 | gpt-5.2 | Yes | Balanced coding and analysis |
-| gpt-5.4-mini | Yes | Fast implementation, fallback if not deployed |
+| gpt-5.4-mini | Yes | Fast implementation (everyday-dev workhorse) |
 | gpt-4o | Yes | Multimodal (images, text) |
 | gpt-4o-mini | Yes | Quick image analysis |
 

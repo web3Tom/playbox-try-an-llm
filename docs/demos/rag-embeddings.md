@@ -104,8 +104,8 @@ embeddings = client.embeddings.create(
 ### Why ChromaDB Today?
 
 - **No external dependency** — entirely in-memory and DevPod-local
-- **Fast development** — test RAG logic without waiting for embeddings API
-- **Fallback path** — works until text-embedding-3-large deploys
+- **Fast development** — iterate on RAG logic without standing up a database
+- **No data egress** — vectors never leave the sandbox
 
 ## The Routing Lesson
 

@@ -10,10 +10,6 @@ Demonstrates audio transcription and diarization using Azure OpenAI's `gpt-4o-tr
 uv run python demos/transcription/transcribe.py
 ```
 
-## Status
-
-**⚠️ Endpoint Not Yet Deployed**: The `gpt-4o-transcribe-diarize` endpoint is not currently available in this Azure environment. This script demonstrates the correct API structure and error handling; actual transcription will return a "not deployed" error until the endpoint becomes available.
-
 ## Environment Variables
 
 - `AZURE_OPENAI_ENDPOINT`: Azure OpenAI deployment endpoint
@@ -25,6 +21,4 @@ uv run python demos/transcription/transcribe.py
 2. Call `client.audio.transcriptions.create(model="gpt-4o-transcribe-diarize", file=...)`
 3. Parse and return transcript with diarization metadata
 
-## Fallback
-
-None — demo is illustrative pending endpoint deployment.
+Point the `audio_file` path in `main()` at a real audio file to run it against your own recording.
