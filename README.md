@@ -74,6 +74,7 @@ plus a matching page in the docs site. They are ordered roughly easiest → most
 | `scripts/init.sh` | DevPod bootstrap |
 | `PROMPTS.md` | Copy-paste prompt library for PMs |
 | `AGENTS.md` | Working contract for AI agents in this repo |
+| `OVERVIEW.md` | Project handover brief — vision, GitLab Epic, sub-issues, and the full repo rationale |
 
 ## Constraints (read before running anything)
 
