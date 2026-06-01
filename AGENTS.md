@@ -23,7 +23,6 @@ as supported alternatives only.
 | Run codebase analyzer | `uv run python demos/codebase-analyzer/analyze.py` | varies |
 | Run orchestrator demo | `uv run python demos/orchestrator/run_orchestrator.py` | varies |
 | Run RAG demo | `uv run python demos/rag-embeddings/rag_query.py` | varies |
-| Run data-analysis demo | `uv run python demos/data-analysis/analyze_data.py` | ~3s |
 | React demo | `cd demos/react-ui && npm install && npm run dev` | ~30s |
 | Serve docs | `uv run mkdocs serve` | ~3s |
 
@@ -61,8 +60,7 @@ playbox-try-an-llm/
 │   ├── gitlab-agent/       -> GitLab API integration via PAT
 │   ├── react-ui/           -> Vite+React frontend generation (scaffold exercise)
 │   ├── transcription/      -> gpt-4o-transcribe-diarize (audio / diarization)
-│   ├── rag-embeddings/     -> local in-memory vector search (text-embedding-3-large)
-│   └── data-analysis/      -> pandas over a mock CSV
+│   └── rag-embeddings/     -> local in-memory vector search (text-embedding-3-large)
 ├── specs/                  -> Spec-Kit-style specs (Constitution -> Spec -> Plan -> Impl)
 ├── docs/                   -> MkDocs source (PM track + dev track) + adr/
 ├── utils/token_tracker.py  -> per-call token/cost logging

@@ -33,12 +33,11 @@ This is **the core lesson**. Models are tools with different cost/capability tra
 Learn routing patterns in [Models & Routing](models.md); see them in action across the demos.
 
 ### 3. Show-Don't-Tell Executable Demos
-Seven runnable examples cover:
+Six runnable examples cover:
 - **Codebase Analyzer** — multi-stage pipeline that maps a repo into an interactive graph
 - **Orchestrator** — reasoning model plans, coding model executes
 - **GitLab Integration** — read and summarize issues via PAT
 - **RAG + Embeddings** — retrieval-augmented generation with in-memory store
-- **Data Analysis** — pandas workflows with chart output
 - **Audio Transcription** — multimodal transcription and diarization
 - **React UI Generation** — generative AI scaffold for frontend development
 

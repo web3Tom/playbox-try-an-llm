@@ -69,15 +69,14 @@ tokens on a theme toggle is exactly the waste this template teaches you to avoid
 
 ## Next Steps
 
-You've now seen all seven demos:
+You've now seen all six demos:
 
 1. **Codebase Analyzer** — multi-stage repo analysis + graph dashboard
 2. **Orchestrator** — reasoning + delegation
 3. **GitLab Agent** — API integration + summarization
 4. **RAG** — semantic search + synthesis
-5. **Data Analysis** — code generation + visualization
-6. **Transcription** — multimodal audio processing
-7. **React UI** — a runnable frontend to extend with the `react-frontend` role
+5. **Transcription** — multimodal audio processing
+6. **React UI** — a runnable frontend to extend with the `react-frontend` role
 
 Each emphasizes **task-specific model routing**. Return to [Models & Routing](../models.md) to
 review the decision matrix, or explore [Agents as Code](../getting-started/agents.md).

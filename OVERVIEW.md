@@ -15,11 +15,12 @@ description: Overview of the Try-an-LLM task for the Polestar Playbox
 > mirrored publicly at https://github.com/web3Tom/playbox-try-an-llm. See the project spec
 > §8 for the decision log.
 
-> [!note] Demo #1 superseded 2026-05-31
-> The first demo was changed from `pm-ui` (a Streamlit chat UI on port 8501) to `codebase-analyzer`
-> (a multi-stage repo→graph analyzer with a React dashboard on port 5174). The Epic, sub-issues,
-> and embedded skeleton code below describe the ORIGINAL plan and are retained as a record; the
-> current first demo is `demos/codebase-analyzer/`.
+> [!note] Demo set changed 2026-05-31
+> Two changes since the original plan below: (1) the first demo was changed from `pm-ui` (a
+> Streamlit chat UI on port 8501) to `codebase-analyzer` (a multi-stage repo→graph analyzer
+> with a React dashboard on port 5174); (2) the `data-analysis` demo was removed entirely.
+> The Epic, sub-issues, and embedded skeleton code below describe the ORIGINAL plan and are
+> retained as a record; the current demos live under `demos/`.
 
 ## 1. Project Overview
 
@@ -124,12 +125,9 @@ polestar-playbox-template/
 │   ├── react-ui/               # 4. Frontend Generation (scaffold exercise)
 │   ├── transcription/          # 5. Multimodal / Audio Processing
 │   │   └── transcribe.py
-│   ├── rag-embeddings/         # 6. Context Grounding (Embeddings)
-│   │   ├── data/
-│   │   └── rag_query.py
-│   └── data-analysis/          # 7. Agent-written pandas over a mock CSV
-│       ├── analyze_data.py
-│       └── transaction_metrics.csv
+│   └── rag-embeddings/         # 6. Context Grounding (Embeddings)
+│       ├── data/
+│       └── rag_query.py
 ├── specs/                      # Spec-Kit-style specs
 ├── docs/                       # MkDocs Documentation Source
 │   ├── index.md
@@ -343,8 +341,7 @@ This template provides the initial directory structure and essential files for t
 │   ├── gitlab-agent/
 │   ├── react-ui/
 │   ├── transcription/
-│   ├── rag-embeddings/
-│   └── data-analysis/
+│   └── rag-embeddings/
 ├── docs/                   # MkDocs source files (Guide & Concepts) + adr/
 ├── .devpod/                # DevPod helpers
 │   └── install-kilo-code.sh # Installs the Kilo Code extension on workspace start
@@ -581,7 +578,6 @@ nav:
     - Orchestrator: demos/orchestrator.md
     - GitLab Agent: demos/gitlab-agent.md
     - RAG & Embeddings: demos/rag-embeddings.md
-    - Data Analysis: demos/data-analysis.md
     - Transcription: demos/transcription.md
     - React UI: demos/react-ui.md
   - Decisions:

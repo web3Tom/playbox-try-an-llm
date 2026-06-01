@@ -20,7 +20,6 @@ nav:
     - Orchestrator (Planning + Delegation): demos/orchestrator.md
     - GitLab Issue Summarizer: demos/gitlab-agent.md
     - RAG with Embeddings: demos/rag-embeddings.md
-    - Data Analysis: demos/data-analysis.md
     - Audio Transcription: demos/transcription.md
     - React UI Generation: demos/react-ui.md
   - Decisions: adr/ADR-0001.md

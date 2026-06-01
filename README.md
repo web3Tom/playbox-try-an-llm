@@ -55,7 +55,6 @@ plus a matching page in the docs site. They are ordered roughly easiest → most
 | **orchestrator** | The planning pattern: a reasoning model plans, then delegates code-gen down to a cheaper model | `gpt-5.4` → delegates to `gpt-5.4-mini` | `uv run python demos/orchestrator/run_orchestrator.py` |
 | **gitlab-agent** | Enterprise API integration — read & summarize project issues via a GitLab PAT | `gpt-5.4-mini` | `uv run python demos/gitlab-agent/review_issues.py` |
 | **rag-embeddings** | Ground answers in your own docs with an in-memory vector store (no external DB) | `text-embedding-3-large` | `uv run python demos/rag-embeddings/rag_query.py` |
-| **data-analysis** | Agent-written pandas over a mock CSV; produces `output_chart.png` | `gpt-5.4` (to generate logic) | `uv run python demos/data-analysis/analyze_data.py` |
 | **transcription** | Audio transcription with speaker diarization | `gpt-4o-transcribe-diarize` | `uv run python demos/transcription/transcribe.py` |
 | **react-ui** | Runnable Vite+React app (theme toggle + model-routing card) governed by a Kilo role file | `gpt-5.2` (`react-frontend` role) | `cd demos/react-ui && npm install && npm run dev` (port 5173) |
 
@@ -64,7 +63,7 @@ plus a matching page in the docs site. They are ordered roughly easiest → most
 | Path | What's there |
 |------|--------------|
 | `.kilo/` | Kilo Code agent config — roles (`agents/`), global rules, `kilo.jsonc` model routing |
-| `demos/` | Executable use cases: `codebase-analyzer`, `orchestrator`, `gitlab-agent`, `rag-embeddings`, `data-analysis`, `transcription`, `react-ui` |
+| `demos/` | Executable use cases: `codebase-analyzer`, `orchestrator`, `gitlab-agent`, `rag-embeddings`, `transcription`, `react-ui` |
 | `docs/` | MkDocs guide (PM track + dev track) and architecture decision records (`docs/adr/`) |
 | `utils/` | `token_tracker.py` — per-call token/cost logging |
 | `scripts/init.sh` | DevPod bootstrap |
