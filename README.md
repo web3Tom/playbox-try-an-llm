@@ -6,7 +6,7 @@ and you have a working, opinionated starting point instead of a blank chat box.
 
 It is built for two audiences:
 
-- **Product Managers** — a local chat UI and a copy-paste prompt library, no IDE knowledge required.
+- **Product Managers** — a copy-paste prompt library (`PROMPTS.md`) to use in the Kilo Code chat, no IDE knowledge required.
 - **Developers** — executable demos showing agent configuration, model routing, and how to bridge
   the sandbox to real infrastructure (GitLab API, RAG, orchestration).
 
@@ -26,7 +26,7 @@ It is built for two audiences:
 ```bash
 bash scripts/init.sh                 # copies .env.example -> .env, moves you off main, runs uv sync
 # fill in .env with your Playbox endpoint + tokens
-uv run streamlit run demos/pm-ui/run_ui_playground.py   # PM chat UI on port 8501
+uv run python demos/codebase-analyzer/analyze.py   # analyze the bundled sample repo
 ```
 
 ## Read the guide as you go
@@ -41,7 +41,7 @@ uv run mkdocs serve            # serves the guide at http://localhost:8000
 ```
 
 Suggested path: **Home → Getting Started (Environment, Agents) → Models & Routing → Demos**.
-PMs can jump straight to the *PM UI* demo and `PROMPTS.md`; developers should read *Models &
+PMs can jump straight to `PROMPTS.md`; developers should read *Models &
 Routing* first, since matching the model to the job is the whole point of the template.
 
 ## The demos
@@ -51,7 +51,7 @@ plus a matching page in the docs site. They are ordered roughly easiest → most
 
 | Demo | What it shows | Routes to | Run it |
 |------|---------------|-----------|--------|
-| **pm-ui** | Non-technical Streamlit chat UI — pick a model, send a prompt, see a reply | model picker (5.4 / mini / nano / 5.2) | `uv run streamlit run demos/pm-ui/run_ui_playground.py` (port 8501) |
+| **codebase-analyzer** | Multi-stage pipeline that maps a repo into an interactive graph — the flagship routing showcase | `nano` → `mini` → `gpt-5.4` (+ pure code) | `uv run python demos/codebase-analyzer/analyze.py` |
 | **orchestrator** | The planning pattern: a reasoning model plans, then delegates code-gen down to a cheaper model | `gpt-5.4` → delegates to `gpt-5.4-mini` | `uv run python demos/orchestrator/run_orchestrator.py` |
 | **gitlab-agent** | Enterprise API integration — read & summarize project issues via a GitLab PAT | `gpt-5.4-mini` | `uv run python demos/gitlab-agent/review_issues.py` |
 | **rag-embeddings** | Ground answers in your own docs with an in-memory vector store (no external DB) | `text-embedding-3-large` | `uv run python demos/rag-embeddings/rag_query.py` |
@@ -64,7 +64,7 @@ plus a matching page in the docs site. They are ordered roughly easiest → most
 | Path | What's there |
 |------|--------------|
 | `.kilo/` | Kilo Code agent config — roles (`agents/`), global rules, `kilo.jsonc` model routing |
-| `demos/` | Executable use cases: `pm-ui`, `orchestrator`, `gitlab-agent`, `rag-embeddings`, `data-analysis`, `transcription`, `react-ui` |
+| `demos/` | Executable use cases: `codebase-analyzer`, `orchestrator`, `gitlab-agent`, `rag-embeddings`, `data-analysis`, `transcription`, `react-ui` |
 | `docs/` | MkDocs guide (PM track + dev track) and architecture decision records (`docs/adr/`) |
 | `utils/` | `token_tracker.py` — per-call token/cost logging |
 | `scripts/init.sh` | DevPod bootstrap |

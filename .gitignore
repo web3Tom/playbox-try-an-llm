@@ -14,6 +14,7 @@ node_modules/
 # Build / generated artifacts
 output_chart.png
 site/                 # mkdocs build output
+dist/                 # Vite build output
 *.egg-info/
 
 # OS / editor

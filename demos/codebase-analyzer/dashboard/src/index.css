@@ -1,0 +1,198 @@
+:root {
+  --color-bg: #ffffff;
+  --color-surface: #f5f5f5;
+  --color-text: #1a1a1a;
+  --color-text-secondary: #666666;
+  --color-border: #e0e0e0;
+  --color-accent: #0066cc;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Ubuntu',
+    'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.5;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.app-header {
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  padding: 1.25rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+}
+
+.app-header h1 {
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.subtitle {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  margin-top: 0.25rem;
+  max-width: 60ch;
+}
+
+.stats {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.stats .warn {
+  color: #cc6600;
+  font-weight: 600;
+}
+
+.body {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+.graph-canvas {
+  flex: 1;
+  min-width: 0;
+  background:
+    radial-gradient(circle, var(--color-border) 1px, transparent 1px) 0 0 / 24px 24px;
+}
+
+.sidebar {
+  width: 320px;
+  border-left: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.sidebar section {
+  margin-bottom: 2rem;
+}
+
+.sidebar h3 {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-secondary);
+  margin-bottom: 0.75rem;
+}
+
+.legend {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.legend li {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+}
+
+.swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.legend-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.legend-text small {
+  color: var(--color-text-secondary);
+  font-size: 0.8rem;
+}
+
+.node-detail code,
+.empty-state code {
+  display: inline-block;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 0.2rem 0.45rem;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.8rem;
+  margin-bottom: 0.6rem;
+  word-break: break-all;
+}
+
+.node-detail p {
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.node-detail .meta {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+}
+
+.tag {
+  background-color: var(--color-accent);
+  color: white;
+  font-size: 0.72rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 10px;
+}
+
+.hint {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+}
+
+.app-footer {
+  background-color: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  padding: 0.85rem 2rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+}
+
+.empty-state {
+  margin: auto;
+  text-align: center;
+  padding: 2rem;
+}
+
+.empty-state h2 {
+  margin-bottom: 0.75rem;
+}
+
+.empty-state p {
+  color: var(--color-text-secondary);
+  margin-bottom: 0.5rem;
+}

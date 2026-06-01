@@ -15,6 +15,12 @@ description: Overview of the Try-an-LLM task for the Polestar Playbox
 > mirrored publicly at https://github.com/web3Tom/playbox-try-an-llm. See the project spec
 > §8 for the decision log.
 
+> [!note] Demo #1 superseded 2026-05-31
+> The first demo was changed from `pm-ui` (a Streamlit chat UI on port 8501) to `codebase-analyzer`
+> (a multi-stage repo→graph analyzer with a React dashboard on port 5174). The Epic, sub-issues,
+> and embedded skeleton code below describe the ORIGINAL plan and are retained as a record; the
+> current first demo is `demos/codebase-analyzer/`.
+
 ## 1. Project Overview
 
 The target initiative is the "Polestar Playbox," an internal-facing enterprise AI Sandbox providing a secure, network-controlled environment for developers and non-technical Product Managers to experiment with agentic workflows. The immediate goal is to develop a `devpod`-ready template repository serving as the "Try an LLM" entry point.
@@ -107,8 +113,9 @@ polestar-playbox-template/
 │   ├── kilo.jsonc              # Provider/model config + per-role limits (ADR-0001)
 │   └── system_prompt.md        # Global rules & network constraints
 ├── demos/                      # Executable Use Cases
-│   ├── pm-ui/                  # 1. Non-Technical Entry Point
-│   │   └── run_ui_playground.py
+│   ├── codebase-analyzer/      # 1. Repo→graph analyzer (flagship routing demo)
+│   │   ├── analyze.py
+│   │   └── dashboard/
 │   ├── orchestrator/           # 2. Planning & Delegation
 │   │   ├── spec.md
 │   │   └── run_orchestrator.py
@@ -331,7 +338,7 @@ This template provides the initial directory structure and essential files for t
 │   ├── kilo.jsonc          # Provider/model config + per-role limits
 │   └── system_prompt.md    # Global rules & network constraints
 ├── demos/                  # Demo Use Cases
-│   ├── pm-ui/
+│   ├── codebase-analyzer/
 │   ├── orchestrator/
 │   ├── gitlab-agent/
 │   ├── react-ui/
@@ -376,8 +383,8 @@ components:
         - name: AZURE_OPENAI_ENDPOINT
           value: "" # e.g. https://<your-playbox-apim-endpoint>/playbox-ai-deployment/openai
       endpoints:
-        - name: pm-ui
-          targetPort: 8501
+        - name: codebase-analyzer
+          targetPort: 5174
           exposure: public
         - name: docs
           targetPort: 8000
@@ -570,7 +577,7 @@ nav:
     - AI Agents & Models: getting-started/agents.md
   - Models & Routing: models.md
   - Demos:
-    - PM UI: demos/pm-ui.md
+    - Codebase Analyzer: demos/codebase-analyzer.md
     - Orchestrator: demos/orchestrator.md
     - GitLab Agent: demos/gitlab-agent.md
     - RAG & Embeddings: demos/rag-embeddings.md

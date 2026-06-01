@@ -20,7 +20,7 @@ as supported alternatives only.
 |------|---------|-------|
 | Bootstrap workspace | `bash scripts/init.sh` | ~5s |
 | Install Python deps | `uv sync` | ~30s |
-| Run PM-UI playground | `uv run streamlit run demos/pm-ui/run_ui_playground.py` (port 8501) | ~5s |
+| Run codebase analyzer | `uv run python demos/codebase-analyzer/analyze.py` | varies |
 | Run orchestrator demo | `uv run python demos/orchestrator/run_orchestrator.py` | varies |
 | Run RAG demo | `uv run python demos/rag-embeddings/rag_query.py` | varies |
 | Run data-analysis demo | `uv run python demos/data-analysis/analyze_data.py` | ~3s |
@@ -56,7 +56,7 @@ playbox-try-an-llm/
 │   ├── kilo.jsonc          -> provider/model config + per-role limits (see ADR-0001)
 │   └── system_prompt.md    -> global rules + network constraints
 ├── demos/                  -> executable use cases (one subdir each, each with a README)
-│   ├── pm-ui/              -> non-technical entry point (Streamlit)
+│   ├── codebase-analyzer/ -> repo→graph pipeline + React dashboard (flagship routing demo)
 │   ├── orchestrator/       -> planner + sub-agent delegation
 │   ├── gitlab-agent/       -> GitLab API integration via PAT
 │   ├── react-ui/           -> Vite+React frontend generation (scaffold exercise)

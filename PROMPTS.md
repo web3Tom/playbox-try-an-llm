@@ -1,7 +1,6 @@
 # Polestar Playbox — Prompt Library
 
-Copy-paste these pre-tested prompts to get value from the Playbox immediately — in the PM UI
-playground (`demos/pm-ui/`) or your Kilo Code chat. Fill in the `[bracketed]` variables. Each
+Copy-paste these pre-tested prompts to get value from the Playbox immediately — paste them into your Kilo Code chat. Fill in the `[bracketed]` variables. Each
 prompt notes the **model to route to**, because picking the right model is the whole point.
 
 ## For Product Managers

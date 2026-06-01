@@ -16,8 +16,8 @@ components:
           value: ""
       endpoints:
         # Pre-forward every demo service port so users never hand-configure them.
-        - name: pm-ui
-          targetPort: 8501       # Streamlit PM UI
+        - name: codebase-analyzer
+          targetPort: 5174       # Codebase-analyzer graph dashboard (Vite)
           exposure: public
         - name: docs
           targetPort: 8000       # mkdocs serve

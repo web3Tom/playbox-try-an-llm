@@ -18,7 +18,7 @@ The Playbox treats agent configuration as **declarative, version-controlled code
 │   ├── testing.md               # Test coverage requirements
 │   └── security.md              # Input validation, secret handling
 ├── skills/
-│   ├── pm-ui-prompts.md         # Curated prompts for the PM UI
+│   ├── prompt-library.md       # Curated prompt templates (mirrors PROMPTS.md)
 │   ├── gitlab-integration.md    # GitLab API patterns
 │   ├── rag-retrieval.md         # RAG best practices
 │   └── ...
@@ -61,7 +61,7 @@ summarizer, etc.). You do not implement directly.
 - rules/security.md
 
 ## Available Skills
-- skills/pm-ui-prompts.md
+- skills/prompt-library.md
 
 ## Cost Notes
 gpt-5.4 is expensive and uses reasoning tokens. Use this role sparingly
@@ -92,7 +92,7 @@ You work within the scope defined by the orchestrator's plan.
 - rules/security.md
 
 ## Available Skills
-- skills/pm-ui-prompts.md
+- skills/prompt-library.md
 ```
 
 ## Global Rules
@@ -110,7 +110,7 @@ Any time an agent reads its role definition, these rules are automatically in co
 
 Reusable patterns and domain knowledge live in `.kilo/skills/`. Examples:
 
-- **pm-ui-prompts.md** — curated prompts for each model exposed in the PM UI
+- **prompt-library.md** — curated prompt templates (mirrors PROMPTS.md)
 - **gitlab-integration.md** — best practices for PAT-based GitLab reads
 - **rag-retrieval.md** — ChromaDB query patterns and embedding best practices
 

@@ -52,7 +52,7 @@ uv sync
 This installs all Python dependencies pinned in `pyproject.toml`, including:
 - LangChain / LangGraph for agent orchestration
 - Pydantic for schema validation
-- Streamlit for the PM UI demo
+- The `openai` SDK for Azure model calls
 - ChromaDB for in-memory RAG
 - And others (see `pyproject.toml`)
 
@@ -105,7 +105,7 @@ After setup, verify everything works:
 - [ ] `echo $AZURE_OPENAI_ENDPOINT` returns your endpoint URL
 - [ ] `uv sync` completed without errors
 - [ ] Kilo Code panel opens in VSCode
-- [ ] You can run `uv run streamlit run demos/pm-ui/run_ui_playground.py` (see [PM UI Demo](../demos/pm-ui.md))
+- [ ] You can run `uv run python demos/codebase-analyzer/analyze.py` (see [Codebase Analyzer Demo](../demos/codebase-analyzer.md))
 
 ---
 

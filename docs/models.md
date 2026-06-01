@@ -14,7 +14,7 @@ These models are live and ready to use:
 | **gpt-5-nano** | Fast, lightweight reasoning | Low-Medium | Summarization, classification |
 | **gpt-5-mini** | Fast, compact | Low | Lightweight tasks, quick edits |
 | **gpt-5** | General-purpose | Low-Medium | Conversational, exploratory work |
-| **gpt-4o** | Multimodal (text, images, audio) | Medium | PM UI, chat, image analysis |
+| **gpt-4o** | Multimodal (text, images, audio) | Medium | Chat, image analysis |
 | **gpt-4o-mini** | Lightweight multimodal | Low | Quick image analysis, small tasks |
 
 ## Specialized Models

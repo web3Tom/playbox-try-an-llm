@@ -5,7 +5,6 @@ description = "Polestar Playbox 'Try an LLM' starter template — DevPod-ready e
 requires-python = ">=3.11"
 dependencies = [
     "openai>=1.30",
-    "streamlit>=1.35",
     "chromadb>=0.5",
     "httpx>=0.27",
     "pandas>=2.2",

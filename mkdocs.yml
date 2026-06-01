@@ -16,7 +16,7 @@ nav:
     - Agents as Code: getting-started/agents.md
   - Models & Routing: models.md
   - Demos:
-    - PM UI Playground: demos/pm-ui.md
+    - Codebase Analyzer: demos/codebase-analyzer.md
     - Orchestrator (Planning + Delegation): demos/orchestrator.md
     - GitLab Issue Summarizer: demos/gitlab-agent.md
     - RAG with Embeddings: demos/rag-embeddings.md

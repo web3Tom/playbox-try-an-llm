@@ -34,7 +34,7 @@ Learn routing patterns in [Models & Routing](models.md); see them in action acro
 
 ### 3. Show-Don't-Tell Executable Demos
 Seven runnable examples cover:
-- **PM UI** — non-technical chat interface with direct model exposure
+- **Codebase Analyzer** — multi-stage pipeline that maps a repo into an interactive graph
 - **Orchestrator** — reasoning model plans, coding model executes
 - **GitLab Integration** — read and summarize issues via PAT
 - **RAG + Embeddings** — retrieval-augmented generation with in-memory store
@@ -47,7 +47,7 @@ Each demo emphasizes the routing decision and demonstrates a real-world pattern.
 ## Dual Audience
 
 ### For Product Managers & Non-Technical Leads
-Start with the **PM UI** demo to see the models in action. The PROMPTS library (inside the UI) shows how to prompt each model effectively.
+Start with the **PROMPTS** library (`PROMPTS.md`) — copy-paste a prompt into the Kilo Code chat to see the models in action and learn how to prompt each one effectively.
 
 ### For Developers & Engineers
 Jump to [Getting Started](getting-started/environment.md) to set up your environment, then explore the demos in order. The routing lessons are essential background before you use the orchestrator or extend the agent system.
@@ -56,7 +56,7 @@ Jump to [Getting Started](getting-started/environment.md) to set up your environ
 
 1. **New to the Playbox?** → Read [Environment Setup](getting-started/environment.md)
 2. **Need model routing guidance?** → See [Models & Routing](models.md)
-3. **Ready to run code?** → Pick a [Demo](demos/pm-ui.md) and follow along
+3. **Ready to run code?** → Pick a [Demo](demos/codebase-analyzer.md) and follow along
 4. **Want to extend agents?** → Understand [Agents as Code](getting-started/agents.md)
 
 ---

@@ -71,7 +71,7 @@ tokens on a theme toggle is exactly the waste this template teaches you to avoid
 
 You've now seen all seven demos:
 
-1. **PM UI** — non-technical experimentation
+1. **Codebase Analyzer** — multi-stage repo analysis + graph dashboard
 2. **Orchestrator** — reasoning + delegation
 3. **GitLab Agent** — API integration + summarization
 4. **RAG** — semantic search + synthesis
