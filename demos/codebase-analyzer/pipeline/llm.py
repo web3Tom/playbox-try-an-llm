@@ -35,7 +35,7 @@ def init_client() -> AzureOpenAI | None:
     if not endpoint or not api_key:
         logger.warning("Missing AZURE_OPENAI_ENDPOINT or AZURE_OPENAI_API_KEY")
         return None
-    api_version = os.getenv("AZURE_OPENAI_API_VERSION", "2024-02-15-preview")
+    api_version = os.getenv("AZURE_OPENAI_API_VERSION", "2025-04-01-preview")
     return AzureOpenAI(azure_endpoint=endpoint, api_key=api_key, api_version=api_version)
 
 
@@ -45,26 +45,25 @@ def load_prompt(name: str) -> str:
 
 
 def call_json(client: AzureOpenAI, role: str, system: str, user: str) -> dict:
-    """Run a stage and parse its JSON object response.
+    """Run a stage via the Responses API and parse its JSON object response.
 
-    Routes to ``ROLE_MODELS[role]``. Raises on API failure (fail loud) and on a
-    response that isn't parseable JSON after fence-stripping.
+    Routes to ``ROLE_MODELS[role]``. The prompt mandates a JSON object and
+    ``_parse_json`` strips any code fences, so we rely on that rather than a
+    provider-specific structured-output param. Raises on API failure (fail loud)
+    and on a response that isn't parseable JSON.
     """
     model = ROLE_MODELS[role]
     logger.info("[%s] calling %s", role, model)
     try:
-        resp = client.chat.completions.create(
+        resp = client.responses.create(
             model=model,
-            response_format={"type": "json_object"},
-            messages=[
-                {"role": "system", "content": system},
-                {"role": "user", "content": user},
-            ],
+            instructions=system,
+            input=user,
         )
     except OpenAIError as exc:
         raise RuntimeError(f"{role} stage ({model}) failed: {exc}") from exc
 
-    return _parse_json(resp.choices[0].message.content)
+    return _parse_json(resp.output_text)
 
 
 def _parse_json(content: str | None) -> dict:

@@ -14,6 +14,7 @@ Env vars:
 import logging
 import os
 
+from dotenv import load_dotenv
 from openai import AzureOpenAI, OpenAIError
 
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
@@ -33,7 +34,7 @@ def init_azure_client() -> AzureOpenAI | None:
         return AzureOpenAI(
             azure_endpoint=endpoint,
             api_key=api_key,
-            api_version="2024-02-15-preview"
+            api_version=os.getenv("AZURE_OPENAI_API_VERSION", "2025-04-01-preview"),
         )
     except Exception as e:
         logger.error(f"Failed to initialize Azure OpenAI client: {e}")
@@ -56,20 +57,12 @@ def generate_plan(client: AzureOpenAI, spec: str) -> str:
     """Use gpt-5.4 (reasoning model) to generate implementation plan."""
     try:
         logger.info("Generating plan with gpt-5.4...")
-        response = client.chat.completions.create(
+        response = client.responses.create(
             model="gpt-5.4",
-            messages=[
-                {
-                    "role": "system",
-                    "content": "You are an expert architect. Read the spec and produce a concise, numbered implementation plan."
-                },
-                {
-                    "role": "user",
-                    "content": f"Specification:\n\n{spec}\n\nProduce a numbered plan for implementation."
-                }
-            ]
+            instructions="You are an expert architect. Read the spec and produce a concise, numbered implementation plan.",
+            input=f"Specification:\n\n{spec}\n\nProduce a numbered plan for implementation.",
         )
-        plan = response.choices[0].message.content
+        plan = response.output_text
         logger.info("Plan generated successfully")
         return plan
     except OpenAIError as e:
@@ -82,6 +75,7 @@ def generate_plan(client: AzureOpenAI, spec: str) -> str:
 
 def main():
     """Run orchestrator demo."""
+    load_dotenv()
     client = init_azure_client()
     if not client:
         logger.error("Cannot proceed without Azure OpenAI client.")

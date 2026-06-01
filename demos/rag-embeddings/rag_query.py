@@ -12,6 +12,7 @@ Env vars:
 import logging
 import os
 
+from dotenv import load_dotenv
 from openai import AzureOpenAI, OpenAIError
 
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
@@ -37,7 +38,7 @@ def init_azure_client() -> AzureOpenAI | None:
         return AzureOpenAI(
             azure_endpoint=endpoint,
             api_key=api_key,
-            api_version="2024-02-15-preview"
+            api_version=os.getenv("AZURE_OPENAI_API_VERSION", "2025-04-01-preview"),
         )
     except Exception as e:
         logger.error(f"Failed to initialize Azure OpenAI client: {e}")
@@ -106,21 +107,13 @@ def query_and_answer(client: AzureOpenAI, collection: chromadb.Collection, query
         context = results["documents"][0][0]
         logger.info(f"Retrieved context: {context}")
 
-        response = client.chat.completions.create(
+        response = client.responses.create(
             model="gpt-5.4-mini",
-            messages=[
-                {
-                    "role": "system",
-                    "content": "You are a helpful assistant. Answer only using the provided context."
-                },
-                {
-                    "role": "user",
-                    "content": f"Context: {context}\n\nQuestion: {query}"
-                }
-            ]
+            instructions="You are a helpful assistant. Answer only using the provided context.",
+            input=f"Context: {context}\n\nQuestion: {query}",
         )
 
-        answer = response.choices[0].message.content
+        answer = response.output_text
         logger.info(f"Answer: {answer}")
         print(f"\nFinal Answer:\n{answer}")
 
@@ -131,6 +124,7 @@ def query_and_answer(client: AzureOpenAI, collection: chromadb.Collection, query
 
 def main():
     """Run RAG demo."""
+    load_dotenv()
     client = init_azure_client()
     if not client:
         logger.error("Cannot proceed without Azure OpenAI client.")

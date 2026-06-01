@@ -12,6 +12,7 @@ Env vars:
 import logging
 import os
 
+from dotenv import load_dotenv
 from openai import AzureOpenAI, APIError
 
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
@@ -31,7 +32,7 @@ def init_azure_client() -> AzureOpenAI | None:
         return AzureOpenAI(
             azure_endpoint=endpoint,
             api_key=api_key,
-            api_version="2024-02-15-preview"
+            api_version=os.getenv("AZURE_OPENAI_API_VERSION", "2025-04-01-preview"),
         )
     except Exception as e:
         logger.error(f"Failed to initialize Azure OpenAI client: {e}")
@@ -70,6 +71,7 @@ def transcribe_audio(client: AzureOpenAI, audio_file_path: str) -> str:
 
 def main():
     """Run transcription demo."""
+    load_dotenv()
     client = init_azure_client()
     if not client:
         logger.error("Cannot proceed without Azure OpenAI client.")

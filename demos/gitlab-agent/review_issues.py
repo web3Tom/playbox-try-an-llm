@@ -16,6 +16,7 @@ import logging
 import os
 
 import httpx
+from dotenv import load_dotenv
 from openai import AzureOpenAI, OpenAIError
 
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
@@ -49,7 +50,7 @@ def get_azure_client() -> AzureOpenAI | None:
         return AzureOpenAI(
             azure_endpoint=endpoint,
             api_key=api_key,
-            api_version="2024-02-15-preview"
+            api_version=os.getenv("AZURE_OPENAI_API_VERSION", "2025-04-01-preview"),
         )
     except Exception as e:
         logger.error(f"Failed to initialize Azure OpenAI: {e}")
@@ -93,20 +94,12 @@ def summarize_issues(client: AzureOpenAI, issues: list[dict]) -> str:
 
     try:
         logger.info(f"Summarizing {len(issues)} issues with gpt-5.4-mini...")
-        response = client.chat.completions.create(
+        response = client.responses.create(
             model="gpt-5.4-mini",
-            messages=[
-                {
-                    "role": "system",
-                    "content": "You are a project manager. Summarize the given issues concisely."
-                },
-                {
-                    "role": "user",
-                    "content": f"Summarize these issues:\n\n{issue_text}"
-                }
-            ]
+            instructions="You are a project manager. Summarize the given issues concisely.",
+            input=f"Summarize these issues:\n\n{issue_text}",
         )
-        summary = response.choices[0].message.content
+        summary = response.output_text
         logger.info("Issues summarized successfully")
         return summary
     except OpenAIError as e:
@@ -119,6 +112,7 @@ def summarize_issues(client: AzureOpenAI, issues: list[dict]) -> str:
 
 def main():
     """Run GitLab issue review demo."""
+    load_dotenv()
     gitlab_config = get_gitlab_config()
     if not gitlab_config:
         logger.error("Cannot proceed without GitLab configuration.")
