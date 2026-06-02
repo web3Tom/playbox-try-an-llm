@@ -44,6 +44,44 @@ def test_entrypoints_survive_truncation(tmp_path):
     assert result.files == ["main.py"]
 
 
+def test_skips_boilerplate_and_config_files(tmp_path):
+    # Real logic is kept; boilerplate/config that would just burn tokens is dropped.
+    (tmp_path / "service.py").write_text("def work(): ...\n")   # kept
+    (tmp_path / "__init__.py").write_text("from .service import work\n")
+    (tmp_path / "setup.py").write_text("setup()\n")
+    (tmp_path / "conftest.py").write_text("import pytest\n")
+    (tmp_path / "vite.config.js").write_text("export default {}\n")
+    (tmp_path / ".eslintrc.js").write_text("module.exports = {}\n")
+    (tmp_path / "env.py").write_text("import os\n")
+    (tmp_path / "docker-entrypoint.sh").write_text("#!/bin/sh\n")
+    (tmp_path / "kube_ps1.sh").write_text("#!/bin/sh\n")        # kube* infra tooling
+    (tmp_path / "azure_helper.sh").write_text("#!/bin/sh\n")    # *_helper.sh ops glue
+    (tmp_path / "vault_helper.sh").write_text("#!/bin/sh\n")
+    (tmp_path / "helper.sh").write_text("#!/bin/sh\n")
+    (tmp_path / "vault_login_and_agent.sh").write_text("#!/bin/sh\n")
+    result = enumerate_source_files(tmp_path)
+    assert result.files == ["service.py"]
+    assert result.total_found == 1            # skipped files don't inflate the count
+
+
+def test_keeps_procedural_app_scripts_with_no_members(tmp_path):
+    # 0 top-level functions/classes does NOT mean unnecessary — these are real
+    # application scripts and must be analysed, unlike infra/config files.
+    (tmp_path / "get_report.py").write_text("print('report')\n")
+    (tmp_path / "inspect_alert.py").write_text("print('alert')\n")
+    result = enumerate_source_files(tmp_path)
+    assert set(result.files) == {"get_report.py", "inspect_alert.py"}
+
+
+def test_init_py_is_not_a_kept_entrypoint(tmp_path):
+    # __init__.py used to be prioritised as an entry point; it must now be skipped
+    # entirely, so a real source file wins the single slot.
+    (tmp_path / "__init__.py").write_text("x = 1\n")
+    (tmp_path / "core.py").write_text("y = 2\n")
+    result = enumerate_source_files(tmp_path, max_files=1)
+    assert result.files == ["core.py"]
+
+
 def test_read_text_tolerates_bad_encoding(tmp_path):
     (tmp_path / "weird.py").write_bytes(b"x = '\xff\xfe'\n")
     text = read_text(tmp_path, "weird.py")

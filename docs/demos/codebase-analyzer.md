@@ -61,6 +61,7 @@ The expensive model runs only for whole-project reasoning; the cheap model runs 
 ## Notes
 
 - Structure extraction is **pure-LLM** (works on any language) — there is no tree-sitter or language-specific parser to install.
+- Boilerplate and tooling-config files (`__init__.py`, `setup.py`, `conftest.py`, `*.config.js`, `.eslintrc.*`, …) are **skipped before any LLM call** to avoid wasting tokens on files with little logic. The skip list lives in `pipeline/files.py`.
 - Analysis is **capped at 30 files** by default (prompted at runtime). When a repo is larger, the cap is reported, never silently applied.
 - The temporary clone is removed automatically when the run finishes.
 - The `GITLAB_PAT` is injected into the clone URL only and is never logged.

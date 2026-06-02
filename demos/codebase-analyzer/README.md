@@ -74,6 +74,10 @@ Click any file or module to inspect it in the sidebar.
 
 ## Notes
 
+- Boilerplate and tooling-config files (`__init__.py`, `setup.py`, `conftest.py`,
+  `*.config.js`, `.eslintrc.*`, …) are **skipped before any LLM call** — they
+  carry little logic and would just burn tokens. Edit `IGNORE_FILES` /
+  `_is_insignificant` in `pipeline/files.py` to adjust the list.
 - Analysis is **capped at 30 files** by default (prompted at runtime). When a
   repo is larger, the cap is reported, never silently applied.
 - The temp clone is removed automatically when the run finishes.
