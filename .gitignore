@@ -11,9 +11,10 @@ __pycache__/
 # Node
 node_modules/
 
-# Build / generated artifacts
-site/                 # mkdocs build output
-dist/                 # Vite build output
+# Build / generated artifacts (patterns must stay comment-free: '#' is only a
+# comment at the start of a line, so an inline comment breaks the pattern)
+site/
+dist/
 *.egg-info/
 
 # OS / editor

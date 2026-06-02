@@ -10,6 +10,10 @@ knowledge graph, plus a Vite + React graph dashboard that renders it. It is the
 template's strongest model-routing showcase — one run uses **four different
 routes** (nano, mini, gpt-5.4, and pure code). The pipeline is a standalone
 Python script (not a Kilo skill); Kilo is the assistant you use to extend it.
+
+An **optional, additive** layer under `enhancements/` adds per-file modules
+(top-level functions/classes) and a richer dashboard. It adds files only — it
+never edits anything above it, so deleting `enhancements/` leaves this demo intact.
 <!-- AGENTS-GENERATED:END overview -->
 
 <!-- AGENTS-GENERATED:START filemap -->
@@ -29,6 +33,8 @@ Python script (not a Kilo skill); Kilo is the assistant you use to extend it.
 | `sample-repo/` | Tiny bundled target so the demo runs with zero credentials |
 | `dashboard/` | Vite + React 18 (plain JS) + cytoscape; reads `public/knowledge-graph.json` |
 | `tests/` | Pytest for the deterministic core (files, merge, schema, clone) |
+| `enhancements/enrich_modules.py` | Optional 2nd pass: per-file functions/classes as `function`/`class` nodes (additive; reuses `pipeline/`, never edits it) |
+| `enhancements/dashboard/` | Enhanced dashboard: cytoscape **compound nodes** (files contain their modules), search, port 5175 |
 <!-- AGENTS-GENERATED:END filemap -->
 
 <!-- AGENTS-GENERATED:START commands -->
@@ -37,9 +43,13 @@ Python script (not a Kilo skill); Kilo is the assistant you use to extend it.
 |------|---------|----------|
 | Analyze a repo | `uv run python demos/codebase-analyzer/analyze.py` | `AZURE_OPENAI_*` (+ `GITLAB_PAT` for option 1) |
 | View the graph | `cd dashboard && npm install && npm run dev` → http://localhost:5174 | — |
+| Enrich with modules (optional) | `uv run python demos/codebase-analyzer/enhancements/enrich_modules.py` | `AZURE_OPENAI_*` (+ `GITLAB_PAT` for option 1) |
+| View enriched graph | `cd enhancements/dashboard && npm install && npm run dev` → http://localhost:5175 | — |
 | Run the tests | `uv run --with pytest python -m pytest demos/codebase-analyzer/tests -q` | — |
 
-The dashboard port (5174) is pre-forwarded in `devfile.yaml`.
+Dashboard ports 5174 (base) and 5175 (enhanced) are forwarded in `devfile.yaml`.
+Run enrichment against the **same target** you analyzed — the base run deletes its
+temp clone, so the enrich pass re-resolves it.
 <!-- AGENTS-GENERATED:END commands -->
 
 ## Routing lesson (why this demo exists)
@@ -68,6 +78,7 @@ often; the deterministic work runs for free.** Keep `pipeline/llm.py`'s
 - **Always** report truncation when the file cap is hit — never silently analyze a subset.
 - **Ask first** before adding a dependency: keep Python to `openai`/`python-dotenv`, and the dashboard to React + Vite + cytoscape.
 - **Never** add tree-sitter or native parsers — extraction is deliberately pure-LLM and language-agnostic.
+- **`enhancements/` is additive-only**: it may import from `pipeline/` but must never edit base files, prompts, the base `dashboard/`, or `schema.py`. New `function`/`class` nodes reuse types `schema.py` already defines (no contract change).
 
 ## When stuck
 - Empty dashboard → run `analyze.py` first, or check `dashboard/public/knowledge-graph.json` exists and is valid.
