@@ -78,7 +78,7 @@ work — including the member call graph — runs for free.** Keep `pipeline/llm
 - **Never** log or print `GITLAB_PAT`; it is injected into the clone URL only and scrubbed from errors (`clone.py`). Keep it that way.
 - **Never** clone or reach a GitLab host outside the Playbox-approved internal instance.
 - **Always** report truncation when the file cap is hit — never silently analyze a subset.
-- **Ask first** before adding a dependency: keep Python to `openai`/`python-dotenv`, and the dashboard to React + Vite + cytoscape.
+- **Ask first** before adding a dependency: keep Python to `openai`/`python-dotenv`, and the dashboard to React + Vite + cytoscape (+ `cytoscape-fcose` for the compound-aware layout).
 - **Never** add tree-sitter or native parsers — extraction is deliberately pure-LLM and language-agnostic.
 - Member (function/class) nodes **and** their `calls`/`inherits` edges reuse types `schema.py` already defines and come from the existing per-file `analyze` call — **don't add a separate extraction pass or per-member API calls.** Edge targets are resolved deterministically (same-file first, then unambiguous global match) in `analyze_files._member_edges`; ambiguous names are dropped, never guessed.
 - The per-file pool is **bounded on purpose** (`DEFAULT_MAX_WORKERS`) to respect the APIM rate limit — don't unbound it.

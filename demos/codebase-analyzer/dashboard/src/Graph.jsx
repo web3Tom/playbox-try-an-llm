@@ -1,5 +1,11 @@
 import { useEffect, useRef } from 'react'
 import cytoscape from 'cytoscape'
+import fcose from 'cytoscape-fcose'
+
+// Register the f-CoSE layout once. It understands compound nodes and, with
+// packComponents, tidily packs DISCONNECTED file boxes instead of letting them
+// overlap — the failure mode of the built-in cose on repos with few imports.
+cytoscape.use(fcose)
 
 // Files render as COMPOUND nodes (boxes) that contain their top-level functions
 // and classes. Containment is derived from the shared `filePath` — a member is
@@ -57,6 +63,12 @@ export default function Graph({ graph, layerColors, onSelect, showMembers, query
     const cy = cytoscape({
       container: containerRef.current,
       elements,
+      // Scroll-zoom hardening: the default wheel sensitivity (1) zooms in huge
+      // jumps on a trackpad/high-res wheel. Dampen it and clamp the range so a
+      // stray scroll can't fling the graph to a useless zoom level.
+      wheelSensitivity: 0.2,
+      minZoom: 0.2,
+      maxZoom: 2.5,
       style: [
         {
           selector: 'node',
@@ -153,13 +165,22 @@ export default function Graph({ graph, layerColors, onSelect, showMembers, query
         { selector: '.dim', style: { opacity: 0.12 } }
       ],
       layout: {
-        name: 'cose',
+        // f-CoSE: compound-aware force layout. packComponents lays the
+        // disconnected file boxes out side by side (no overlap), nodeSeparation
+        // keeps members from crowding, and the repulsion/edge values keep
+        // related members close without letting boxes collide.
+        name: 'fcose',
         animate: false,
-        padding: 36,
-        nodeRepulsion: 9000,
+        randomize: true,
+        quality: 'proof',
+        packComponents: true,
+        padding: 40,
+        nodeRepulsion: 8000,
         idealEdgeLength: 120,
-        componentSpacing: 120,
-        nestingFactor: 0.9
+        nodeSeparation: 120,
+        gravity: 0.25,
+        gravityCompound: 1.0,
+        numIter: 2500
       }
     })
 

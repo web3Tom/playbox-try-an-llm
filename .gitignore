@@ -10,6 +10,9 @@ __pycache__/
 
 # Node
 node_modules/
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
 
 # Build / generated artifacts (patterns must stay comment-free: '#' is only a
 # comment at the start of a line, so an inline comment breaks the pattern)
