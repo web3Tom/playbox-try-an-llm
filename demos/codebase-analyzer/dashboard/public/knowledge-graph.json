@@ -135,7 +135,14 @@
     { "source": "file:api/routes.py", "target": "file:services/todo_service.py", "type": "imports" },
     { "source": "file:services/todo_service.py", "target": "file:models/todo.py", "type": "imports" },
     { "source": "file:services/todo_service.py", "target": "file:storage/repository.py", "type": "imports" },
-    { "source": "file:storage/repository.py", "target": "file:models/todo.py", "type": "imports" }
+    { "source": "file:storage/repository.py", "target": "file:models/todo.py", "type": "imports" },
+    { "source": "function:app.py::main", "target": "function:app.py::create_app", "type": "calls" },
+    { "source": "function:app.py::create_app", "target": "function:api/routes.py::build_router", "type": "calls" },
+    { "source": "function:api/routes.py::build_router", "target": "class:api/routes.py::Router", "type": "calls" },
+    { "source": "function:api/routes.py::build_router", "target": "class:services/todo_service.py::TodoService", "type": "calls" },
+    { "source": "class:services/todo_service.py::TodoService", "target": "class:storage/repository.py::TodoRepository", "type": "calls" },
+    { "source": "class:services/todo_service.py::TodoService", "target": "class:models/todo.py::Todo", "type": "calls" },
+    { "source": "class:storage/repository.py::TodoRepository", "target": "class:models/todo.py::Todo", "type": "calls" }
   ],
   "layers": [
     { "id": "layer:0", "name": "Entrypoint", "description": "Application startup and wiring.", "nodeIds": ["file:app.py"] },
@@ -143,5 +150,12 @@
     { "id": "layer:2", "name": "Business Logic", "description": "Todo operations independent of transport/storage.", "nodeIds": ["file:services/todo_service.py"] },
     { "id": "layer:3", "name": "Data/Persistence", "description": "Stores and retrieves entities.", "nodeIds": ["file:storage/repository.py"] },
     { "id": "layer:4", "name": "Domain Model", "description": "Core entities.", "nodeIds": ["file:models/todo.py"] }
+  ],
+  "tour": [
+    { "order": 1, "title": "Start at the entrypoint", "filePath": "app.py", "explanation": "See how the app boots: create_app() builds the router and main() runs it. This is the thread you can pull to reach everything else." },
+    { "order": 2, "title": "Follow requests into the API layer", "filePath": "api/routes.py", "explanation": "build_router() wires a Router to a TodoService. Note how the transport layer knows nothing about storage — it only talks to the service." },
+    { "order": 3, "title": "Read the business logic", "filePath": "services/todo_service.py", "explanation": "TodoService is the heart of the app: list/add/remove operations expressed independently of how todos are stored or served." },
+    { "order": 4, "title": "Drop into persistence", "filePath": "storage/repository.py", "explanation": "TodoRepository is the in-memory store the service delegates to. Swapping this class for a database-backed one would not touch the layers above." },
+    { "order": 5, "title": "Meet the domain entity", "filePath": "models/todo.py", "explanation": "The Todo dataclass is the small shared vocabulary every layer passes around. Understanding it ties the whole tour together." }
   ]
 }

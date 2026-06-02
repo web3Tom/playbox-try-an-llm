@@ -13,7 +13,12 @@ Python script (not a Kilo skill); Kilo is the assistant you use to extend it.
 
 The per-file analyze stage also extracts each file's top-level **functions and
 classes**, emitted as `function`/`class` nodes sharing the file's path; the
-dashboard nests them inside their file as compound "boxes".
+dashboard nests them inside their file as compound "boxes". The same per-file
+response carries each member's `calls`/`extends` names, which a deterministic
+post-pass resolves into `calls`/`inherits` edges — a real call map at **no extra
+API cost**. A final **`tour` stage** (gpt-5.4) emits an ordered reading path
+through the files. Per-file analysis runs **concurrently** under a bounded
+thread pool.
 <!-- AGENTS-GENERATED:END overview -->
 
 <!-- AGENTS-GENERATED:START filemap -->
@@ -24,15 +29,16 @@ dashboard nests them inside their file as compound "boxes".
 | `pipeline/clone.py` | Resolve target (GitLab clone / local / sample) — handles `GITLAB_PAT` |
 | `pipeline/files.py` | Deterministic file enumeration, ignore rules, file cap |
 | `pipeline/scan.py` | Stage: project description from README/manifests |
-| `pipeline/analyze_files.py` | Stage: per-file summary, tags, import edges, **and member (function/class) nodes** |
+| `pipeline/analyze_files.py` | Stage: per-file summary, tags, import edges, member (function/class) nodes, **and `calls`/`inherits` member edges**; runs files concurrently (bounded pool) |
 | `pipeline/merge.py` | Deterministic graph assembly (dedup, prune dangling edges) |
 | `pipeline/architecture.py` | Stage: classify files into layers |
-| `pipeline/schema.py` | KnowledgeGraph data contract + `validate()` |
+| `pipeline/tour.py` | Stage: ordered, file-anchored guided reading path |
+| `pipeline/schema.py` | KnowledgeGraph data contract (nodes, edges, layers, `tour`) + `validate()` |
 | `pipeline/llm.py` | Azure client + the stage→model routing table |
-| `prompts/*.md` | The three stage system prompts (edit these to tune behavior) |
+| `prompts/*.md` | The four stage system prompts (edit these to tune behavior) |
 | `sample-repo/` | Tiny bundled target so the demo runs with zero credentials |
-| `dashboard/` | Vite + React 18 (plain JS) + cytoscape; **compound nodes** (files contain their functions/classes), search, module toggle; reads `public/knowledge-graph.json` |
-| `tests/` | Pytest for the deterministic core (files, merge, schema, clone) |
+| `dashboard/` | Vite + React 18 (plain JS) + cytoscape; **compound nodes** (files contain their functions/classes), colour-coded edges (imports/calls/inherits), search, module toggle, layer filter, guided-tour card, PNG/JSON export; reads `public/knowledge-graph.json` |
+| `tests/` | Pytest for the deterministic core (files, merge, schema, clone, member-edge resolution, tour) |
 <!-- AGENTS-GENERATED:END filemap -->
 
 <!-- AGENTS-GENERATED:START commands -->
@@ -51,11 +57,13 @@ The dashboard port (5174) is pre-forwarded in `devfile.yaml`.
 |-------|--------------|-----|
 | Enumerate files, merge graph | *no model* — Python | Deterministic transforms stay in code |
 | Scan (project description) | `summarizer` → `gpt-5-nano` | Cheap, classification-grade summarization |
-| Analyze each file (the bulk) | `everyday-dev` → `gpt-5-mini` | High-volume workhorse — runs once per file, never the orchestrator. The same call also returns the file's functions/classes (members), so modules cost no extra request |
-| Classify architecture | `orchestrator` → `gpt-5.4` | The one step needing whole-project reasoning earns the expensive model |
+| Analyze each file (the bulk) | `everyday-dev` → `gpt-5-mini` | High-volume workhorse — runs once per file (concurrently), never the orchestrator. The same call also returns the file's functions/classes **and their call/inheritance names**, so members and member edges cost no extra request |
+| Classify architecture | `orchestrator` → `gpt-5.4` | Whole-project reasoning earns the expensive model |
+| Build guided tour | `orchestrator` → `gpt-5.4` | Designing a reading order is the same whole-project judgment, so it shares the orchestrator route |
 
-The lesson in one line: **the expensive model runs once; the cheap model runs
-often; the deterministic work runs for free.** Keep `pipeline/llm.py`'s
+The lesson in one line: **the expensive model runs only for whole-project
+reasoning (architecture + tour); the cheap model runs often; the deterministic
+work — including the member call graph — runs for free.** Keep `pipeline/llm.py`'s
 `ROLE_MODELS` in lockstep with `.kilo/kilo.jsonc`.
 
 <!-- AGENTS-GENERATED:START code-style -->
@@ -72,7 +80,9 @@ often; the deterministic work runs for free.** Keep `pipeline/llm.py`'s
 - **Always** report truncation when the file cap is hit — never silently analyze a subset.
 - **Ask first** before adding a dependency: keep Python to `openai`/`python-dotenv`, and the dashboard to React + Vite + cytoscape.
 - **Never** add tree-sitter or native parsers — extraction is deliberately pure-LLM and language-agnostic.
-- Member (function/class) nodes reuse types `schema.py` already defines and are extracted inside the existing per-file `analyze` call — **don't add a separate extraction pass or per-member API calls.**
+- Member (function/class) nodes **and** their `calls`/`inherits` edges reuse types `schema.py` already defines and come from the existing per-file `analyze` call — **don't add a separate extraction pass or per-member API calls.** Edge targets are resolved deterministically (same-file first, then unambiguous global match) in `analyze_files._member_edges`; ambiguous names are dropped, never guessed.
+- The per-file pool is **bounded on purpose** (`DEFAULT_MAX_WORKERS`) to respect the APIM rate limit — don't unbound it.
+- The `tour` stage must only reference real file paths; `build_tour` drops unknown ones and `validate()` flags them — keep both guards.
 
 ## When stuck
 - Empty dashboard → run `analyze.py` first, or check `dashboard/public/knowledge-graph.json` exists and is valid.

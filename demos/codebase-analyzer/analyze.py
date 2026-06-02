@@ -8,9 +8,10 @@ runs the lean pipeline and writes a knowledge graph the dashboard can render:
 
     clone/resolve [no model]
       -> scan         [gpt-5-nano]   project description
-      -> analyze      [gpt-5-mini]   per-file nodes + import edges
+      -> analyze      [gpt-5-mini]   per-file nodes + import/call/inherit edges
       -> merge        [no model]       dedup + prune dangling edges
       -> architecture [gpt-5.4]        group files into layers
+      -> tour         [gpt-5.4]        ordered guided reading path
       -> write knowledge-graph.json
 """
 
@@ -30,6 +31,7 @@ from pipeline.llm import init_client
 from pipeline.merge import assemble
 from pipeline.scan import scan_project
 from pipeline.schema import KnowledgeGraph, Project, validate
+from pipeline.tour import build_tour
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("analyzer")
@@ -85,15 +87,18 @@ def run_pipeline(target: clone.Target, max_files: int) -> KnowledgeGraph:
     logger.info("[architecture] classifying layers (gpt-5.4)")
     layers = classify_layers(client, nodes)
 
+    logger.info("[tour] building guided reading order (gpt-5.4)")
+    tour = build_tour(client, description, nodes)
+
     project = Project(
         name=target.name,
         description=description,
         languages=scan.languages,
         fileCount=scan.total_found,
-        analyzedFileCount=len(nodes),
+        analyzedFileCount=len([n for n in nodes if n.type == "file"]),
         truncated=scan.truncated,
     )
-    return KnowledgeGraph(project=project, nodes=nodes, edges=edges, layers=layers)
+    return KnowledgeGraph(project=project, nodes=nodes, edges=edges, layers=layers, tour=tour)
 
 
 def main() -> None:
@@ -122,7 +127,8 @@ def main() -> None:
 
     print("\n" + "=" * 60)
     print(f"  Analyzed {graph.project.analyzedFileCount} files into "
-          f"{len(graph.nodes)} nodes, {len(graph.edges)} edges, {len(graph.layers)} layers.")
+          f"{len(graph.nodes)} nodes, {len(graph.edges)} edges, "
+          f"{len(graph.layers)} layers, {len(graph.tour)} tour steps.")
     print(f"  Wrote {GRAPH_OUTPUT.relative_to(Path.cwd())}"
           if GRAPH_OUTPUT.is_relative_to(Path.cwd()) else f"  Wrote {GRAPH_OUTPUT}")
     print("\n  View the graph:")

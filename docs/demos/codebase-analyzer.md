@@ -10,11 +10,12 @@ A standalone Python script (not a Kilo skill) runs the pipeline below, each stag
 |-------|------|-----------|
 | Clone / resolve target | GitLab repo, local path, or bundled sample | *no model* |
 | Scan | one-paragraph project description from the README/manifests | `gpt-5-nano` |
-| Analyze each file | per-file summary, tags, import edges, and top-level functions/classes | `gpt-5-mini` |
+| Analyze each file | per-file summary, tags, import edges, top-level functions/classes, and the `calls`/`inherits` between them | `gpt-5-mini` |
 | Merge graph | deduplicate nodes, prune dangling edges | *no model* |
 | Classify architecture | group files into layers | `gpt-5.4` |
+| Build guided tour | ordered, file-anchored reading path | `gpt-5.4` |
 
-One run exercises **nano → mini → gpt-5.4 → pure code**. The expensive model runs exactly once, for the single step (layer classification) that needs whole-project reasoning.
+One run exercises **nano → mini → gpt-5.4 → pure code**. The expensive model runs only for the two steps that need whole-project reasoning (layer classification and the guided tour); everything else routes cheaper or to plain code. The per-file analyze stage runs **concurrently** (a small, bounded pool — capped to respect the APIM rate limit), and the function/class **call graph is derived from the same per-file response**, so it adds no API requests.
 
 ## How to Run
 
@@ -44,7 +45,7 @@ npm run dev      # http://localhost:5174 (pre-forwarded in devfile.yaml)
 
 The dashboard ships with a committed sample graph, so `npm run dev` renders something immediately even before you run the analyzer.
 
-Each file is rendered as a **box containing its top-level functions (circles) and classes (hexagons)**, with import edges between the boxes. Search to highlight nodes, use the **Show modules** toggle to collapse to file level, and click any file or module for details.
+Each file is rendered as a **box containing its top-level functions (circles) and classes (hexagons)**. Edges are colour-coded — grey **imports** between files, blue **calls** and dashed-purple **inherits** between members. Search to highlight nodes, use the **Show modules** toggle to collapse to file level, click a **layer** in the legend to hide/show it, follow the **Guided Tour** card to walk the codebase in reading order, and use **Export PNG/JSON** to save the graph. Click any file or module for details.
 
 ## The Routing Lesson
 
@@ -52,9 +53,10 @@ This demo is the template's thesis in one pipeline:
 
 - **Enumerating files and merging the graph are deterministic** — they run in plain Python, no model. A file walk or a dedup is not a judgment call.
 - **The per-file analysis is high-volume**, so it runs on the `gpt-5-mini` workhorse — never the orchestrator, even though it executes once per file.
-- **Classifying architecture needs to see the whole project at once** — genuine multi-file reasoning — so it, and only it, earns `gpt-5.4`.
+- **Classifying architecture and designing the guided tour need to see the whole project at once** — genuine multi-file reasoning — so those two stages earn `gpt-5.4`.
+- **The member call graph is free**: the analyze call already returns each member's call/inheritance names, so a deterministic post-pass turns them into edges with no extra requests.
 
-The expensive model runs once; the cheap model runs often; the deterministic work runs for free.
+The expensive model runs only for whole-project reasoning; the cheap model runs often; the deterministic work runs for free.
 
 ## Notes
 

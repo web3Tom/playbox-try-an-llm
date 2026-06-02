@@ -68,6 +68,15 @@ class Layer:
 
 
 @dataclass
+class TourStep:
+    """One step in the guided reading order produced by the tour stage."""
+    order: int
+    title: str
+    filePath: str
+    explanation: str
+
+
+@dataclass
 class Project:
     name: str
     description: str = ""
@@ -83,6 +92,7 @@ class KnowledgeGraph:
     nodes: list[Node] = field(default_factory=list)
     edges: list[Edge] = field(default_factory=list)
     layers: list[Layer] = field(default_factory=list)
+    tour: list[TourStep] = field(default_factory=list)
     version: str = "1.0.0"
 
     def to_dict(self) -> dict:
@@ -114,5 +124,10 @@ def validate(graph: KnowledgeGraph) -> list[str]:
             problems.append(f"edge source {e.source!r} is not a known node")
         if e.target not in node_ids:
             problems.append(f"edge target {e.target!r} is not a known node")
+
+    file_paths = {n.filePath for n in graph.nodes if n.type == "file"}
+    for step in graph.tour:
+        if step.filePath not in file_paths:
+            problems.append(f"tour step {step.order} references unknown file {step.filePath!r}")
 
     return problems

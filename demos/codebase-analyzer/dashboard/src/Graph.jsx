@@ -6,7 +6,7 @@ import cytoscape from 'cytoscape'
 // parented to the file node with the same path. Import edges connect the file
 // boxes. Colour follows architectural layer; shape distinguishes file (box) /
 // function (ellipse) / class (hexagon).
-export default function Graph({ graph, layerColors, onSelect, showMembers, query }) {
+export default function Graph({ graph, layerColors, onSelect, showMembers, query, hiddenLayers, onReady }) {
   const containerRef = useRef(null)
 
   useEffect(() => {
@@ -18,17 +18,40 @@ export default function Graph({ graph, layerColors, onSelect, showMembers, query
     // filePath -> file node id, so members can be parented to their file.
     const pathToFileId = Object.fromEntries(fileNodes.map((n) => [n.filePath, n.id]))
 
+    // Compute visible nodes: exclude files in hidden layers and their members.
+    const visibleFileIds = new Set(
+      fileNodes
+        .filter((n) => !hiddenLayers?.has(n.layer))
+        .map((n) => n.id)
+    )
+    const visibleMemberIds = new Set(
+      memberNodes
+        .filter((n) => !hiddenLayers?.has(n.layer))
+        .map((n) => n.id)
+    )
+    const visibleIds = new Set([...visibleFileIds, ...visibleMemberIds])
+
     const elements = [
-      ...fileNodes.map((n) => ({
-        data: { id: n.id, label: n.name, layer: n.layer || 'none', kind: 'file' }
-      })),
-      ...(showMembers ? memberNodes : []).map((n) => ({
-        data: { id: n.id, label: n.name, layer: n.layer || 'none', kind: n.type, parent: pathToFileId[n.filePath] }
-      })),
+      ...fileNodes
+        .filter((n) => visibleFileIds.has(n.id))
+        .map((n) => ({
+          data: { id: n.id, label: n.name, layer: n.layer || 'none', kind: 'file' }
+        })),
+      ...(showMembers ? memberNodes : [])
+        .filter((n) => visibleMemberIds.has(n.id))
+        .map((n) => ({
+          data: { id: n.id, label: n.name, layer: n.layer || 'none', kind: n.type, parent: pathToFileId[n.filePath] }
+        })),
       // Import edges connect file boxes; both endpoints are always file nodes.
       ...graph.edges
-        .filter((e) => e.type === 'imports')
-        .map((e) => ({ data: { source: e.source, target: e.target, type: e.type } }))
+        .filter((e) => e.type === 'imports' && visibleIds.has(e.source) && visibleIds.has(e.target))
+        .map((e) => ({ data: { source: e.source, target: e.target, type: e.type } })),
+      // Calls and inherits edges connect members; only add if showMembers is on.
+      ...(showMembers
+        ? graph.edges
+            .filter((e) => (e.type === 'calls' || e.type === 'inherits') && visibleIds.has(e.source) && visibleIds.has(e.target))
+            .map((e) => ({ data: { source: e.source, target: e.target, type: e.type } }))
+        : [])
     ]
 
     const cy = cytoscape({
@@ -109,6 +132,21 @@ export default function Graph({ graph, layerColors, onSelect, showMembers, query
           }
         },
         {
+          selector: 'edge[type="calls"]',
+          style: {
+            'line-color': '#2563eb',
+            'target-arrow-color': '#2563eb'
+          }
+        },
+        {
+          selector: 'edge[type="inherits"]',
+          style: {
+            'line-color': '#9333ea',
+            'target-arrow-color': '#9333ea',
+            'line-style': 'dashed'
+          }
+        },
+        {
           selector: 'node:selected',
           style: { 'border-width': 3, 'border-color': '#2563eb', 'border-opacity': 1 }
         },
@@ -145,8 +183,12 @@ export default function Graph({ graph, layerColors, onSelect, showMembers, query
     })
     cy.on('tap', (evt) => { if (evt.target === cy) onSelect(null) })
 
-    return () => cy.destroy()
-  }, [graph, layerColors, onSelect, showMembers, query])
+    onReady?.(cy)
+    return () => {
+      onReady?.(null)
+      cy.destroy()
+    }
+  }, [graph, layerColors, onSelect, showMembers, query, hiddenLayers, onReady])
 
   return <div ref={containerRef} className="graph-canvas" />
 }

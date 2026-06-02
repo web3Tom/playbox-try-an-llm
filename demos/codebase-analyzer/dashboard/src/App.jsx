@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Graph from './Graph'
 
 // One hue per layer, assigned in order. Tuned to read well as both a filled
@@ -11,6 +11,12 @@ export default function App() {
   const [selected, setSelected] = useState(null)
   const [showMembers, setShowMembers] = useState(true)
   const [query, setQuery] = useState('')
+  const [hiddenLayers, setHiddenLayers] = useState(new Set())
+  const cyRef = useRef(null)
+
+  // Stable identity so Graph's effect doesn't rebuild the whole cytoscape graph
+  // (and re-run the layout) on every unrelated render — e.g. selecting a node.
+  const handleReady = useCallback((cy) => { cyRef.current = cy }, [])
 
   useEffect(() => {
     fetch('/knowledge-graph.json')
@@ -79,7 +85,7 @@ export default function App() {
         <div className="stats">
           <span className="stat"><b>{fileNodes.length}</b> files</span>
           <span className="stat"><b>{memberCount}</b> modules</span>
-          <span className="stat"><b>{graph.edges.length}</b> imports</span>
+          <span className="stat"><b>{graph.edges.length}</b> edges</span>
           <span className="stat"><b>{graph.layers.length}</b> layers</span>
           {graph.project.truncated && (
             <span className="stat warn" title="The repo had more files than the analysis cap.">
@@ -110,6 +116,43 @@ export default function App() {
           <i className="k-fn" /> function
           <i className="k-cls" /> class
         </span>
+        <span className="edge-legend">
+          <i className="k-edge k-edge-imports" />
+          imports
+          <i className="k-edge k-edge-calls" />
+          calls
+          <i className="k-edge k-edge-inherits" />
+          inherits
+        </span>
+        <button
+          className="btn-export"
+          onClick={() => {
+            if (cyRef.current) {
+              const png = cyRef.current.png({ full: true, scale: 2, bg: '#ffffff' })
+              const a = document.createElement('a')
+              a.href = png
+              a.download = `${graph.project.name}-graph.png`
+              a.click()
+            }
+          }}
+        >
+          Export PNG
+        </button>
+        <button
+          className="btn-export"
+          onClick={() => {
+            const json = JSON.stringify(graph, null, 2)
+            const blob = new Blob([json], { type: 'application/json' })
+            const url = URL.createObjectURL(blob)
+            const a = document.createElement('a')
+            a.href = url
+            a.download = `${graph.project.name}-knowledge-graph.json`
+            a.click()
+            URL.revokeObjectURL(url)
+          }}
+        >
+          Export JSON
+        </button>
       </div>
 
       <div className="body">
@@ -119,23 +162,66 @@ export default function App() {
           onSelect={setSelected}
           showMembers={showMembers}
           query={query}
+          hiddenLayers={hiddenLayers}
+          onReady={handleReady}
         />
 
         <aside className="sidebar">
           <section className="card">
             <h3>Layers</h3>
             <ul className="legend">
-              {graph.layers.map((l) => (
-                <li key={l.id}>
-                  <span className="swatch" style={{ background: layerColors[l.id] }} />
-                  <span className="legend-text">
-                    <strong>{l.name}</strong>
-                    <small>{l.description}</small>
-                  </span>
-                </li>
-              ))}
+              {graph.layers.map((l) => {
+                const isHidden = hiddenLayers.has(l.id)
+                return (
+                  <li
+                    key={l.id}
+                    className={`layer-row ${isHidden ? 'hidden' : ''}`}
+                    onClick={() => {
+                      const updated = new Set(hiddenLayers)
+                      if (isHidden) {
+                        updated.delete(l.id)
+                      } else {
+                        updated.add(l.id)
+                      }
+                      setHiddenLayers(updated)
+                    }}
+                  >
+                    <span className="swatch" style={{ background: layerColors[l.id] }} />
+                    <span className="legend-text">
+                      <strong>{l.name}</strong>
+                      <small>{l.description}</small>
+                    </span>
+                  </li>
+                )
+              })}
             </ul>
           </section>
+
+          {graph.tour && graph.tour.length > 0 && (
+            <section className="card">
+              <h3>Guided Tour</h3>
+              <ul className="tour-list">
+                {graph.tour.map((step) => (
+                  <li key={step.order} className="tour-step">
+                    <div className="tour-header">
+                      <span className="tour-number">{step.order}</span>
+                      <h4 className="tour-title">{step.title}</h4>
+                    </div>
+                    <p className="tour-explanation">{step.explanation}</p>
+                    <button
+                      className="tour-button"
+                      onClick={() => {
+                        const fileNode = graph.nodes.find((n) => n.filePath === step.filePath && n.type === 'file')
+                        if (fileNode) setSelected(fileNode)
+                      }}
+                    >
+                      Go to {step.filePath}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
           <section className="card">
             <h3>{selected ? (selected.type === 'file' ? 'Selected file' : 'Selected module') : 'Inspector'}</h3>

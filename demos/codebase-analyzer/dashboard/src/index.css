@@ -80,7 +80,6 @@ body { background: var(--bg); color: var(--text); line-height: 1.5; }
   cursor: pointer;
 }
 .shape-key {
-  margin-left: auto;
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
@@ -92,6 +91,32 @@ body { background: var(--bg); color: var(--text); line-height: 1.5; }
 .k-file { border-radius: 3px; border: 2px solid #94a3b8; background: transparent !important; }
 .k-fn { border-radius: 50%; }
 .k-cls { clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%); }
+
+.edge-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  color: var(--text-soft);
+  margin-left: 1rem;
+}
+.k-edge { width: 12px; height: 1.6px; display: inline-block; }
+.k-edge:not(:first-child) { margin-left: 0.7rem; }
+.k-edge-imports { background: #cbd5e1; }
+.k-edge-calls { background: #2563eb; }
+.k-edge-inherits { background: #9333ea; border-top: 0.8px dashed #9333ea; background: none; }
+
+.btn-export {
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 0.85rem;
+  cursor: pointer;
+  font-weight: 500;
+}
+.btn-export:hover { background: var(--surface); border-color: var(--accent); }
 
 /* ---- layout body ---- */
 .body { flex: 1; display: flex; min-height: 0; }
@@ -130,10 +155,43 @@ body { background: var(--bg); color: var(--text); line-height: 1.5; }
 }
 
 .legend { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; }
-.legend li { display: flex; gap: 0.6rem; align-items: flex-start; }
+.legend li { display: flex; gap: 0.6rem; align-items: flex-start; padding: 0.4rem 0.3rem; cursor: pointer; border-radius: 6px; }
+.legend li:hover { background: var(--surface-2); }
+.legend li.hidden { opacity: 0.5; }
 .swatch { width: 13px; height: 13px; border-radius: 4px; margin-top: 3px; flex-shrink: 0; }
-.legend-text { display: flex; flex-direction: column; }
+.legend-text { display: flex; flex-direction: column; flex: 1; }
 .legend-text small { color: var(--text-soft); font-size: 0.78rem; }
+
+.tour-list { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; }
+.tour-step { padding: 0.6rem; background: var(--surface-2); border-radius: 6px; border-left: 2px solid var(--accent); }
+.tour-header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem; }
+.tour-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.tour-title { font-size: 0.82rem; font-weight: 600; color: var(--text); margin: 0; }
+.tour-explanation { font-size: 0.78rem; color: var(--text-soft); margin: 0.4rem 0; line-height: 1.4; }
+.tour-button {
+  display: inline-block;
+  padding: 0.3rem 0.6rem;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.tour-button:hover { opacity: 0.9; }
 
 /* ---- detail ---- */
 .node-detail code,

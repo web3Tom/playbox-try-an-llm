@@ -17,8 +17,14 @@ Analyze:
   - type is exactly "function" or "class".
   - Give each a one-sentence summary and a complexity of
     "simple" | "moderate" | "complex".
+  - "calls": the names of OTHER top-level functions or classes (anywhere in this
+    repository) that this member calls or instantiates. Names only — no paths,
+    no methods, no standard-library/third-party names. Empty list if none.
+  - For a class, "extends": the names of the base classes it inherits from
+    (repo classes only). Omit or empty list if it inherits from nothing or only
+    from external bases. Functions never have "extends".
   - If the file defines no top-level functions or classes (pure config, script
-    glue, constants), return an empty list. Never invent members.
+    glue, constants), return an empty list. Never invent members or calls.
 
 Respond with a JSON object only:
 {
@@ -31,7 +37,9 @@ Respond with a JSON object only:
       "name": "<identifier>",
       "type": "function" | "class",
       "summary": "<one sentence>",
-      "complexity": "simple" | "moderate" | "complex"
+      "complexity": "simple" | "moderate" | "complex",
+      "calls": ["<name>", ...],
+      "extends": ["<BaseClassName>", ...]
     }
   ]
 }
