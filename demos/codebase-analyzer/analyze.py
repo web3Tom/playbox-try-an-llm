@@ -7,10 +7,13 @@ Asks what to analyze (internal GitLab repo / local path / bundled sample), then
 runs the lean pipeline and writes a knowledge graph the dashboard can render:
 
     clone/resolve [no model]
-      -> scan         [gpt-5-nano]   project description
+      -> enumerate    [no model]       filter noise, drop generated, cap per dir
+      -> scan         [gpt-5-nano]   project description (+ is-it-informative)
+      -> select       [gpt-5-nano]   rank candidates, keep the most significant
       -> analyze      [gpt-5-mini]   per-file nodes + import/call/inherit edges
       -> merge        [no model]       dedup + prune dangling edges
       -> architecture [gpt-5.4]        group files into layers
+      -> describe     [gpt-5-nano]   if README was uninformative, infer from code
       -> tour         [gpt-5.4]        ordered guided reading path
       -> write knowledge-graph.json
 """
@@ -26,11 +29,13 @@ from dotenv import load_dotenv
 from pipeline import clone
 from pipeline.architecture import classify_layers
 from pipeline.analyze_files import analyze_files
+from pipeline.describe import synthesize_description
 from pipeline.files import enumerate_source_files
 from pipeline.llm import init_client
 from pipeline.merge import assemble
 from pipeline.scan import scan_project
 from pipeline.schema import KnowledgeGraph, Project, validate
+from pipeline.select import select_files
 from pipeline.tour import build_tour
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
@@ -76,16 +81,27 @@ def run_pipeline(target: clone.Target, max_files: int) -> KnowledgeGraph:
         )
 
     logger.info("[scan] summarizing project (gpt-5-nano)")
-    description = scan_project(client, target.path, target.name)
+    description, informative = scan_project(client, target.path, target.name)
 
-    logger.info("[analyze] %d files (gpt-5-mini)", len(scan.files))
-    node_groups, edge_groups = analyze_files(client, str(target.path), scan.files)
+    logger.info("[select] choosing files to analyze (gpt-5-nano)")
+    selected = select_files(client, description, scan.candidates, scan.files, max_files)
+    if len(scan.candidates) > len(selected):
+        logger.info("Selected %d of %d candidate files", len(selected), len(scan.candidates))
+
+    logger.info("[analyze] %d files (gpt-5-mini)", len(selected))
+    node_groups, edge_groups = analyze_files(client, str(target.path), selected)
 
     logger.info("[merge] assembling graph (no model)")
     nodes, edges = assemble(node_groups, edge_groups)
 
     logger.info("[architecture] classifying layers (gpt-5.4)")
     layers = classify_layers(client, nodes)
+
+    if not informative:
+        logger.info("[describe] README uninformative — inferring from code (gpt-5-nano)")
+        inferred = synthesize_description(client, target.name, scan.languages, nodes)
+        if inferred:
+            description = inferred
 
     logger.info("[tour] building guided reading order (gpt-5.4)")
     tour = build_tour(client, description, nodes)

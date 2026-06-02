@@ -8,11 +8,13 @@ core idea — **route each task to the cheapest model that can do it**.
 ## What it does
 
 ```
-clone / resolve target        [no model]   GitLab repo, local path, or bundled sample
+enumerate / resolve target    [no model]   clone (GitLab/local/sample); drop noise + generated; cap per dir
   └─ scan                      gpt-5-nano  one-paragraph project description
+  └─ select                    gpt-5-nano  rank candidates, keep the most significant files
   └─ analyze each file         gpt-5-mini  summary, tags, imports + functions/classes and their calls/inheritance
   └─ merge graph               [no model]    dedup nodes, prune dangling edges
   └─ classify architecture     gpt-5.4       group files into layers
+  └─ describe from code        gpt-5-nano  ONLY if the README was uninformative — infer purpose/stack
   └─ build guided tour         gpt-5.4       ordered reading path through the files
   └─ write knowledge-graph.json -> dashboard renders it
 ```
@@ -74,10 +76,19 @@ Click any file or module to inspect it in the sidebar.
 
 ## Notes
 
-- Boilerplate and tooling-config files (`__init__.py`, `setup.py`, `conftest.py`,
-  `*.config.js`, `.eslintrc.*`, …) are **skipped before any LLM call** — they
-  carry little logic and would just burn tokens. Edit `IGNORE_FILES` /
-  `_is_insignificant` in `pipeline/files.py` to adjust the list.
+- **File selection is layered** so the budget isn't wasted on low-value files:
+  - *Deterministic guards* (`pipeline/files.py`, no model): skip boilerplate/config
+    (`__init__.py`, `setup.py`, `*.config.js`, …), skip **machine-generated** files
+    (DB migrations, `*_pb2.py`, `*.generated.*`, anything stamped `@generated`), and
+    apply a **per-directory cap** so one folder (e.g. `alembic/versions/`) can't eat
+    the whole budget. Edit `IGNORE_FILES` / `_is_insignificant` / `_is_generated`.
+  - *`select` stage* (`gpt-5-nano`): when candidates still exceed the cap, a cheap
+    triage call ranks them by architectural significance. It falls back to the
+    deterministic pick on any error and never analyzes a path it didn't find.
+- The project description normally comes from the README/manifests (`scan`). When
+  those are a **generic template** (no real purpose or stack), a `describe` stage
+  infers the description from the analyzed file summaries instead of reporting
+  "cannot be determined" — so even an undocumented repo gets a useful summary.
 - Analysis is **capped at 30 files** by default (prompted at runtime). When a
   repo is larger, the cap is reported, never silently applied.
 - The temp clone is removed automatically when the run finishes.

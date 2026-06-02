@@ -23,8 +23,15 @@ _CONTEXT_FILES = [
 _MAX_CONTEXT_CHARS = 6000
 
 
-def scan_project(client: AzureOpenAI, root: str | Path, name: str) -> str:
-    """Return a short project description. Empty string if no context found."""
+def scan_project(client: AzureOpenAI, root: str | Path, name: str) -> tuple[str, bool]:
+    """Return ``(description, informative)`` from the README/manifests.
+
+    ``informative`` is False when the README/manifests don't actually reveal the
+    project (generic template, empty, or no context at all) — the caller uses
+    that as the trigger to synthesize a better description from code evidence
+    later. A missing flag defaults to True, but an empty description is always
+    treated as uninformative.
+    """
     root = Path(root)
     chunks: list[str] = []
     for fname in _CONTEXT_FILES:
@@ -35,10 +42,12 @@ def scan_project(client: AzureOpenAI, root: str | Path, name: str) -> str:
             break
 
     if not chunks:
-        logger.info("No README/manifest found; skipping description")
-        return ""
+        logger.info("No README/manifest found; will infer description from code")
+        return "", False
 
     context = "\n\n".join(chunks)[:_MAX_CONTEXT_CHARS]
     user = f"Project name: {name}\n\n{context}"
     result = call_json(client, "scan", load_prompt("scan"), user)
-    return result.get("description", "").strip()
+    description = result.get("description", "").strip()
+    informative = bool(result.get("informative", True)) and bool(description)
+    return description, informative

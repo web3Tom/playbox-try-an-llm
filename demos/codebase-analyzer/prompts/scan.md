@@ -5,7 +5,10 @@ and does.
 Rules:
 - 1–3 sentences. No marketing language, no speculation.
 - Describe the project's purpose and main technology, not its file layout.
-- If the README is empty or unhelpful, say so plainly.
+- Set "informative" to false when the README/manifests are generic, empty, or a
+  template that does NOT reveal the project's purpose or tech stack (in that case
+  still give your best partial description). Set it to true only when they
+  genuinely describe what the project does.
 
 Respond with a JSON object only:
-{ "description": "<your description>" }
+{ "description": "<your description>", "informative": true | false }

@@ -8,11 +8,13 @@ A standalone Python script (not a Kilo skill) runs the pipeline below, each stag
 
 | Stage | Work | Routes to |
 |-------|------|-----------|
-| Clone / resolve target | GitLab repo, local path, or bundled sample | *no model* |
+| Enumerate / resolve target | clone or resolve; drop noise + generated files; cap per directory | *no model* |
 | Scan | one-paragraph project description from the README/manifests | `gpt-5-nano` |
+| Select | rank candidate files by significance, keep the most important (deterministic fallback) | `gpt-5-nano` |
 | Analyze each file | per-file summary, tags, import edges, top-level functions/classes, and the `calls`/`inherits` between them | `gpt-5-mini` |
 | Merge graph | deduplicate nodes, prune dangling edges | *no model* |
 | Classify architecture | group files into layers | `gpt-5.4` |
+| Describe from code | *(only if the README was uninformative)* infer the description from file summaries | `gpt-5-nano` |
 | Build guided tour | ordered, file-anchored reading path | `gpt-5.4` |
 
 One run exercises **nano → mini → gpt-5.4 → pure code**. The expensive model runs only for the two steps that need whole-project reasoning (layer classification and the guided tour); everything else routes cheaper or to plain code. The per-file analyze stage runs **concurrently** (a small, bounded pool — capped to respect the APIM rate limit), and the function/class **call graph is derived from the same per-file response**, so it adds no API requests.
@@ -51,7 +53,8 @@ Each file is rendered as a **box containing its top-level functions (circles) an
 
 This demo is the template's thesis in one pipeline:
 
-- **Enumerating files and merging the graph are deterministic** — they run in plain Python, no model. A file walk or a dedup is not a judgment call.
+- **Enumerating files and merging the graph are deterministic** — they run in plain Python, no model. A file walk, a generated-file filter, a per-directory cap, or a dedup is not a judgment call.
+- **Choosing *which* files to read, when there are too many, IS a judgment call** — so the `select` stage spends a cheap `gpt-5-nano` call on it (with a deterministic fallback), rather than letting a flood of migrations crowd out the real code.
 - **The per-file analysis is high-volume**, so it runs on the `gpt-5-mini` workhorse — never the orchestrator, even though it executes once per file.
 - **Classifying architecture and designing the guided tour need to see the whole project at once** — genuine multi-file reasoning — so those two stages earn `gpt-5.4`.
 - **The member call graph is free**: the analyze call already returns each member's call/inheritance names, so a deterministic post-pass turns them into edges with no extra requests.
@@ -61,7 +64,8 @@ The expensive model runs only for whole-project reasoning; the cheap model runs 
 ## Notes
 
 - Structure extraction is **pure-LLM** (works on any language) — there is no tree-sitter or language-specific parser to install.
-- Boilerplate and tooling-config files (`__init__.py`, `setup.py`, `conftest.py`, `*.config.js`, `.eslintrc.*`, …) are **skipped before any LLM call** to avoid wasting tokens on files with little logic. The skip list lives in `pipeline/files.py`.
+- **File selection is layered.** Deterministic guards in `pipeline/files.py` skip boilerplate/config (`__init__.py`, `*.config.js`, …) and machine-generated files (DB migrations, `*_pb2.py`, `*.generated.*`, `@generated` content), and cap how many files come from any one directory so a folder like `alembic/versions/` can't eat the whole budget. When candidates still exceed the cap, the `select` stage (`gpt-5-nano`) ranks them by architectural significance — with a deterministic fallback so it can never break the run.
+- The description comes from the README/manifests, but when those are a generic template the `describe` stage (`gpt-5-nano`) infers it from the analyzed file summaries instead — an undocumented repo still gets a useful summary rather than "cannot be determined."
 - Analysis is **capped at 30 files** by default (prompted at runtime). When a repo is larger, the cap is reported, never silently applied.
 - The temporary clone is removed automatically when the run finishes.
 - The `GITLAB_PAT` is injected into the clone URL only and is never logged.
