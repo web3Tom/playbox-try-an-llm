@@ -36,16 +36,16 @@ The target initiative is the "Polestar Playbox," an internal-facing enterprise A
 
     - `gpt-5.4` (Orchestration / planning — **reasoning model**)
 
-    - `gpt-5.4-mini` (Everyday dev)
+    - `gpt-5-mini` (Everyday dev)
 
-    - `gpt-5.4-nano` (Summarization)
+    - `gpt-5-nano` (Summarization)
 
     - `gpt-4o-transcribe-diarize` (Audio processing)
 
     - `text-embedding-3-large` (RAG / embeddings)
 
     > **All models are deployed and live:** `gpt-5.4`, `gpt-5.2`, `gpt-5.1`, `gpt-5-nano`,
-    > `gpt-5-mini`, `gpt-5`, `gpt-4o`, `gpt-4o-mini`, `gpt-5.4-mini`, `gpt-5.4-nano`,
+    > `gpt-5-mini`, `gpt-5`, `gpt-4o`, `gpt-4o-mini`,
     > `gpt-4o-transcribe-diarize`, and `text-embedding-3-large`.
 
 - **IDE Extension:** **Kilo Code** is the scaffolded agent surface (`.kilo/`). **Cline** and
@@ -92,7 +92,7 @@ To ensure users extract maximum value from the Playbox, this repository is archi
 
 ### 2. Task-Specific Model Routing
 **The Concept:** Matching the right model to the right job based on complexity, speed, and context windows.
-**The Reasoning:** Users naturally gravitate toward the most powerful model (e.g., `gpt-5.4`) for everything, which is inefficient. By pre-configuring specific agents for specific endpoints — using `gpt-5.4-nano` for rapid summarization, `gpt-5.4-mini` or `5.2` for everyday coding, and `gpt-5.4` exclusively for complex orchestration and planning — we educate users on cost-efficiency and latency optimization. Crucially, `gpt-5.4` is a **reasoning model**: its reasoning tokens are spent from the *same* per-request output budget as the visible answer, so each role's output cap and reasoning effort must be sized to the job (see [ADR-0001](docs/adr/ADR-0001.md)).
+**The Reasoning:** Users naturally gravitate toward the most powerful model (e.g., `gpt-5.4`) for everything, which is inefficient. By pre-configuring specific agents for specific endpoints — using `gpt-5-nano` for rapid summarization, `gpt-5-mini` or `5.2` for everyday coding, and `gpt-5.4` exclusively for complex orchestration and planning — we educate users on cost-efficiency and latency optimization. Crucially, `gpt-5.4` is a **reasoning model**: its reasoning tokens are spent from the *same* per-request output budget as the visible answer, so each role's output cap and reasoning effort must be sized to the job (see [ADR-0001](docs/adr/ADR-0001.md)).
 
 ### 3. Show, Don't Tell Enterprise Demos
 **The Concept:** Providing functional, immediately executable code paths rather than abstract documentation.
@@ -105,9 +105,9 @@ polestar-playbox-template/
 ├── .kilo/                      # Agent Configuration (Kilo Code)
 │   ├── agents/                 # Per-role definitions, each pinned to a model
 │   │   ├── orchestrator.md     # -> gpt-5.4 (reasoning; planning/delegation)
-│   │   ├── everyday-dev.md     # -> gpt-5.4-mini (workhorse)
-│   │   ├── summarizer.md       # -> gpt-5.4-nano
-│   │   └── react-frontend.md   # -> gpt-5.2 (fallback gpt-5.4-mini)
+│   │   ├── everyday-dev.md     # -> gpt-5-mini (workhorse)
+│   │   ├── summarizer.md       # -> gpt-5-nano
+│   │   └── react-frontend.md   # -> gpt-5.2 (fallback gpt-5-mini)
 │   ├── rules/                  # Always-on global rules (general.md)
 │   ├── skills/                 # Custom tool definitions
 │   ├── commands/               # Reusable slash commands
@@ -201,7 +201,7 @@ The development of this epic will be tracked via the following sub-issues:
 
 1. Create a `.kilo/` directory structure containing `agents/`, `rules/`, `skills/`, `commands/`, and the `kilo.jsonc` provider config.
 
-2. Create specialized agent role files in `.kilo/agents/`: `orchestrator.md` (gpt-5.4), `everyday-dev.md` (gpt-5.4-mini/5.2), and `summarizer.md` (gpt-5.4-nano).
+2. Create specialized agent role files in `.kilo/agents/`: `orchestrator.md` (gpt-5.4), `everyday-dev.md` (gpt-5-mini/5.2), and `summarizer.md` (gpt-5-nano).
 
 3. Draft a global `.kilo/system_prompt.md` enforcing Playbox network constraints.
 
@@ -243,9 +243,9 @@ The development of this epic will be tracked via the following sub-issues:
 
 **Tasks:**
 
-1. **Orchestrator Demo**: Create `demos/orchestrator/` with a `spec.md` and `run_orchestrator.py` showing planner/sub-agent delegation (gpt-5.4 plans, delegates code-gen to gpt-5.4-mini).
+1. **Orchestrator Demo**: Create `demos/orchestrator/` with a `spec.md` and `run_orchestrator.py` showing planner/sub-agent delegation (gpt-5.4 plans, delegates code-gen to gpt-5-mini).
 
-2. **GitLab API Demo**: Create `demos/gitlab-agent/` with a `review_issues.py` script authenticating via GitLab PAT to read/summarize current project issues using `gpt-5.4-mini`.
+2. **GitLab API Demo**: Create `demos/gitlab-agent/` with a `review_issues.py` script authenticating via GitLab PAT to read/summarize current project issues using `gpt-5-mini`.
 
     **Acceptance Criteria:**
 
@@ -445,24 +445,24 @@ We use the `.kilo/` structure. Roles live in `.kilo/agents/` (Kilo's term for Ro
 # Role: Orchestrator
 You are the Lead Technical Project Manager. Your job is to break down complex tasks into smaller, executable steps.
 You MUST prioritize using the `gpt-5.4` model for planning. It is a reasoning model — reserve it for genuine planning, not routine code generation.
-When you need to generate code, delegate the task to a specific sub-agent (e.g., the React Frontend role) and instruct them to use `gpt-5.2` or `gpt-5.4-mini` to save tokens.
+When you need to generate code, delegate the task to a specific sub-agent (e.g., the React Frontend role) and instruct them to use `gpt-5.2` or `gpt-5-mini` to save tokens.
 Always review the output of your sub-agents before declaring a task complete.
 ```
 
-**`.kilo/agents/react-frontend.md`** (Optimized for gpt-5.2 or gpt-5.4-mini)
+**`.kilo/agents/react-frontend.md`** (Optimized for gpt-5.2 or gpt-5-mini)
 ```markdown
 # Role: React Frontend Developer
 You are an expert ReactJS developer. You focus on building clean, responsive UI components.
-Use the `gpt-5.2` model for rapid UI iterations (fallback `gpt-5.4-mini` for harder reasoning).
+Use the `gpt-5.2` model for rapid UI iterations (fallback `gpt-5-mini` for harder reasoning).
 Always prefer functional components and React Hooks.
 If you need complex logic or state management, you may request the user to switch to `gpt-5.4`.
 ```
 
-**`.kilo/agents/summarizer.md`** (Optimized for gpt-5.4-nano)
+**`.kilo/agents/summarizer.md`** (Optimized for gpt-5-nano)
 ```markdown
 # Role: Content Summarizer
 You are a fast, efficient summarization engine.
-You MUST strictly use the `gpt-5.4-nano` model.
+You MUST strictly use the `gpt-5-nano` model.
 Provide concise, bulleted summaries of provided text, code, or transcripts. Focus only on the core facts and action items.
 ```
 
@@ -498,7 +498,7 @@ In Kilo Code, switch agents or reference a role file in your prompt. For example
 1. Open Kilo Code.
 2. Select the `gpt-5.4` model (orchestrator role).
 3. Paste this prompt:
-   > "Act as the Orchestrator (@.kilo/agents/orchestrator.md). Read `demos/orchestrator/spec.md`. Create a step-by-step plan. For step 1, ask me to switch to the `gpt-5.4-mini` model before you generate the code."
+   > "Act as the Orchestrator (@.kilo/agents/orchestrator.md). Read `demos/orchestrator/spec.md`. Create a step-by-step plan. For step 1, ask me to switch to the `gpt-5-mini` model before you generate the code."
 ```
 
 **`demos/orchestrator/spec.md`**
@@ -514,7 +514,7 @@ Project: Build a simple Python script that reads a CSV file of names and outputs
 
 *Note: A basic React app (e.g., via Vite) should be scaffolded in this directory.*
 
-1. Open Kilo Code and select `gpt-5.4-mini`.
+1. Open Kilo Code and select `gpt-5-mini`.
 2. Paste this prompt:
    > "Act as the Frontend Dev (@.kilo/agents/react-frontend.md). Start the local development server in the `demos/react-ui` directory. Then, modify `App.jsx` to include a button that toggles between dark mode and light mode."
 ```
@@ -546,7 +546,7 @@ print(f"Sending {audio_file_path} to the gpt-4o-transcribe-diarize endpoint...")
 # )
 # print(response.text)
 
-print("Transcription complete! Now, ask the AI (using gpt-5.4-nano) to summarize the output.")
+print("Transcription complete! Now, ask the AI (using gpt-5-nano) to summarize the output.")
 ```
 
 **`demos/rag-embeddings/README.md`**
@@ -558,7 +558,7 @@ print("Transcription complete! Now, ask the AI (using gpt-5.4-nano) to summarize
 1. Run the demo:
    > `uv run python demos/rag-embeddings/rag_query.py`
 
-It generates embeddings for sample policy documents, stores them in an in-memory ChromaDB instance, retrieves the most relevant chunk for a query, and answers using `gpt-5.4-mini` grounded only on the retrieved context.
+It generates embeddings for sample policy documents, stores them in an in-memory ChromaDB instance, retrieves the most relevant chunk for a query, and answers using `gpt-5-mini` grounded only on the retrieved context.
 ```
 
 ##### 4. Documentation Site (MkDocs)
@@ -602,7 +602,7 @@ This environment is highly controlled. You have access to the **Kilo Code** assi
 
 You are currently on the simplest path. This repository is designed to introduce you to:
 1. **Configuring AI Agents:** How to give models specific rules and context via `.kilo/`.
-2. **Model Selection:** Knowing when to use `gpt-5.4` (reasoning) vs `gpt-5.4-nano`.
+2. **Model Selection:** Knowing when to use `gpt-5.4` (reasoning) vs `gpt-5-nano`.
 3. **Practical Execution:** Running code, building UIs, and calling Azure APIs.
 ```
 
@@ -619,13 +619,13 @@ Use these pre-tested prompts to quickly execute tasks within the Playbox environ
 **Draft a Product Requirements Document (PRD)** *(route to gpt-5.4)*
 > Act as an expert Product Manager. Draft a comprehensive Product Requirements Document (PRD) for a new feature called [Feature Name]. The primary goal of this feature is to [Primary Goal]. The target users are [Target Audience]. Please include the following sections: Executive Summary, User Stories, Out of Scope, and Success Metrics.
 
-**Summarize User Research Transcripts** *(route to gpt-5.4-nano)*
+**Summarize User Research Transcripts** *(route to gpt-5-nano)*
 > You are analyzing user feedback. Read the following transcript/notes and provide a concise summary. Group your findings into three categories: 1) Key Pain Points, 2) Feature Requests, and 3) General Sentiment.
 >
 > [Insert Transcript/Notes Here]
 
 ## Developers
-**Write a Unit Test Suite** *(route to gpt-5.4-mini)*
+**Write a Unit Test Suite** *(route to gpt-5-mini)*
 > Review the attached file `[filename.py/js]`. Write a comprehensive unit test suite for the primary functions using [pytest/Jest]. Ensure you include edge cases for [specific constraint, e.g., null values, network timeouts].
 
 **Code Review against Security Best Practices** *(route to gpt-5.4)*
@@ -660,7 +660,7 @@ if not endpoint or not api_key:
     st.warning("Set AZURE_OPENAI_ENDPOINT and AZURE_OPENAI_API_KEY in .env to call the models.")
 
 # Model selection — picking the right model is the point.
-selected_model = st.selectbox("Choose a Model:", ["gpt-5.4", "gpt-5.4-mini", "gpt-5.4-nano", "gpt-5.2"])
+selected_model = st.selectbox("Choose a Model:", ["gpt-5.4", "gpt-5-mini", "gpt-5-nano", "gpt-5.2"])
 user_input = st.text_area("Enter your prompt (or paste from PROMPTS.md):")
 
 if st.button("Generate") and user_input:
@@ -687,8 +687,8 @@ logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 # Approximated enterprise costs per 1k tokens for Playbox sandbox tracking
 COST_RATES = {
     "gpt-5.4": {"prompt": 0.01, "completion": 0.03},
-    "gpt-5.4-mini": {"prompt": 0.001, "completion": 0.002},
-    "gpt-5.4-nano": {"prompt": 0.0005, "completion": 0.001},
+    "gpt-5-mini": {"prompt": 0.001, "completion": 0.002},
+    "gpt-5-nano": {"prompt": 0.0005, "completion": 0.001},
     "text-embedding-3-large": {"prompt": 0.00013, "completion": 0.0}
 }
 
@@ -759,10 +759,10 @@ if __name__ == "__main__":
     retrieved = results["documents"][0][0]
     logger.info(f"Retrieved Context: {retrieved}")
 
-    # Answer grounded ONLY on retrieved context, via gpt-5.4-mini.
+    # Answer grounded ONLY on retrieved context, via gpt-5-mini.
     prompt = f"Answer the query based ONLY on the context.\nContext: {retrieved}\nQuery: {query}"
     response = client.chat.completions.create(
-        model="gpt-5.4-mini",
+        model="gpt-5-mini",
         messages=[{"role": "user", "content": prompt}],
     )
     print(f"\nAgent Response: {response.choices[0].message.content}")

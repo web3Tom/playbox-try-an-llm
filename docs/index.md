@@ -18,7 +18,7 @@ The Playbox teaches three interconnected concepts:
 
 ### 1. Agent Configuration as Code
 Your agents live in `.kilo/` — role definitions, model assignments, global rules, and skills. This declarative approach means:
-- Every role pins one model (e.g., `orchestrator → gpt-5.4`, `developer → gpt-5.4-mini`)
+- Every role pins one model (e.g., `orchestrator → gpt-5.4`, `developer → gpt-5-mini`)
 - Global rules apply consistently across all agent invocations
 - You version-control your agent behavior just like code
 - See [Agents as Code](getting-started/agents.md) for the structure
@@ -26,8 +26,8 @@ Your agents live in `.kilo/` — role definitions, model assignments, global rul
 ### 2. Task-Specific Model Routing
 This is **the core lesson**. Models are tools with different cost/capability tradeoffs:
 - **gpt-5.4** is a reasoning model — expensive, use it only for orchestration and planning
-- **gpt-5.4-mini** / **gpt-5.2** handle everyday coding and problem-solving
-- **gpt-5.4-nano** does quick summarization and classification
+- **gpt-5-mini** / **gpt-5.2** handle everyday coding and problem-solving
+- **gpt-5-nano** does quick summarization and classification
 - **gpt-4o** handles multimodal tasks (images, audio)
 
 Learn routing patterns in [Models & Routing](models.md); see them in action across the demos.

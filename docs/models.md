@@ -23,8 +23,8 @@ These task-specific models are also live:
 
 | Model | Capability | Use Case |
 |-------|-----------|----------|
-| `gpt-5.4-mini` | Fast reasoning + cost savings | The everyday-dev workhorse |
-| `gpt-5.4-nano` | Ultra-fast, lowest cost | Summarization, quick classification |
+| `gpt-5-mini` | Fast reasoning + cost savings | The everyday-dev workhorse |
+| `gpt-5-nano` | Ultra-fast, lowest cost | Summarization, quick classification |
 | `gpt-4o-transcribe-diarize` | Audio transcription with speaker tracking | The transcription demo |
 | `text-embedding-3-large` | High-dimensional embeddings | RAG with semantic search |
 
@@ -35,10 +35,10 @@ These task-specific models are also live:
 | Task Type | Primary Model | Reasoning | Cost |
 |-----------|---------------|-----------|------|
 | **Orchestration, Planning** | gpt-5.4 | Reasoning model; breaks down complex problems | High |
-| **Feature Implementation** | gpt-5.4-mini | Fast coding, still strong at logic | Medium |
+| **Feature Implementation** | gpt-5-mini | Fast coding, still strong at logic | Medium |
 | **Bug Fixes, Code Review** | gpt-5.2 | Balanced speed and reasoning | Medium-High |
-| **UI / Frontend Work** | gpt-5.2 (fallback gpt-5.4-mini) | Component generation; escalate for complex logic | Medium |
-| **Quick Classification** | gpt-5.4-nano | Fast summarization, no deep reasoning needed | Low |
+| **UI / Frontend Work** | gpt-5.2 (fallback gpt-5-mini) | Component generation; escalate for complex logic | Medium |
+| **Quick Classification** | gpt-5-nano | Fast summarization, no deep reasoning needed | Low |
 | **General Chat, Exploration** | gpt-5 | Conversational, exploratory | Low-Medium |
 | **Images, Charts, Mockups** | gpt-4o | Sees visual context; generates designs | Medium |
 | **Quick Image Checks** | gpt-4o-mini | Lightweight vision | Low |
@@ -61,7 +61,7 @@ All three count toward your quota. Because reasoning tokens are expensive, gpt-5
 - Complex architectural problems
 - Planning multi-step workflows
 
-For everyday coding, summarization, and quick fixes, use gpt-5.2 or gpt-5.4-mini.
+For everyday coding, summarization, and quick fixes, use gpt-5.2 or gpt-5-mini.
 
 ### Output Cap with Reasoning
 
@@ -82,11 +82,11 @@ Use gpt-5.4 for everything (too expensive, overkill for summarization).
    - Output: Breakdown of the task, team categories, prioritization criteria
    - Cost: High, but only runs once
 
-2. **Developer (gpt-5.4-mini)** — "Fetch issues from GitLab and group by team"
+2. **Developer (gpt-5-mini)** — "Fetch issues from GitLab and group by team"
    - Output: Python code using the GitLab API
    - Cost: Medium, efficient implementation
 
-3. **Summarizer (gpt-5.4-nano)** — "Summarize each issue group and extract priorities"
+3. **Summarizer (gpt-5-nano)** — "Summarize each issue group and extract priorities"
    - Output: Summary text, bullet-point priorities
    - Cost: Low, fast classification
 
@@ -96,13 +96,13 @@ Use gpt-5.4 for everything (too expensive, overkill for summarization).
 
 A role can define a deliberate fallback — a second model to escalate to when the primary
 isn't the right fit. The `react-frontend` role uses this: `gpt-5.2` by default, escalating to
-`gpt-5.4-mini` for harder reasoning.
+`gpt-5-mini` for harder reasoning.
 
 ```jsonc
 // In .kilo/kilo.jsonc
 "react-frontend": {
   "model": "gpt-5.2",
-  "fallback": "gpt-5.4-mini"
+  "fallback": "gpt-5-mini"
 }
 ```
 

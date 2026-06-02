@@ -7,8 +7,8 @@ Asks what to analyze (internal GitLab repo / local path / bundled sample), then
 runs the lean pipeline and writes a knowledge graph the dashboard can render:
 
     clone/resolve [no model]
-      -> scan         [gpt-5.4-nano]   project description
-      -> analyze      [gpt-5.4-mini]   per-file nodes + import edges
+      -> scan         [gpt-5-nano]   project description
+      -> analyze      [gpt-5-mini]   per-file nodes + import edges
       -> merge        [no model]       dedup + prune dangling edges
       -> architecture [gpt-5.4]        group files into layers
       -> write knowledge-graph.json
@@ -73,10 +73,10 @@ def run_pipeline(target: clone.Target, max_files: int) -> KnowledgeGraph:
             "AZURE_OPENAI_API_KEY (see .env.example)."
         )
 
-    logger.info("[scan] summarizing project (gpt-5.4-nano)")
+    logger.info("[scan] summarizing project (gpt-5-nano)")
     description = scan_project(client, target.path, target.name)
 
-    logger.info("[analyze] %d files (gpt-5.4-mini)", len(scan.files))
+    logger.info("[analyze] %d files (gpt-5-mini)", len(scan.files))
     node_groups, edge_groups = analyze_files(client, str(target.path), scan.files)
 
     logger.info("[merge] assembling graph (no model)")

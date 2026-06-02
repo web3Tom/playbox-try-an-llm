@@ -1,4 +1,4 @@
-"""Analyze stage [gpt-5.4-mini] — the high-volume per-file work.
+"""Analyze stage [gpt-5-mini] — the high-volume per-file work.
 
 For each file we build one graph node deterministically (so every analyzed file
 is guaranteed a node) and ask the model only for the judgment parts: summary,

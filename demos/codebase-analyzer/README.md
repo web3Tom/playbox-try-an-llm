@@ -9,8 +9,8 @@ core idea — **route each task to the cheapest model that can do it**.
 
 ```
 clone / resolve target        [no model]   GitLab repo, local path, or bundled sample
-  └─ scan                      gpt-5.4-nano  one-paragraph project description
-  └─ analyze each file         gpt-5.4-mini  per-file summary, tags, imports, functions/classes
+  └─ scan                      gpt-5-nano  one-paragraph project description
+  └─ analyze each file         gpt-5-mini  per-file summary, tags, imports, functions/classes
   └─ merge graph               [no model]    dedup nodes, prune dangling edges
   └─ classify architecture     gpt-5.4       group files into layers
   └─ write knowledge-graph.json -> dashboard renders it

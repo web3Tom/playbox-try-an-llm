@@ -1,7 +1,7 @@
 # Demo: React UI Generation
 
 A small, **runnable Vite + React app** that doubles as the frontend-generation playground. It's
-governed by the Kilo Code `react-frontend` role (`gpt-5.2`, fallback `gpt-5.4-mini`) — the place
+governed by the Kilo Code `react-frontend` role (`gpt-5.2`, fallback `gpt-5-mini`) — the place
 to practice driving a UI specialist agent against a real codebase.
 
 ## What It Does
@@ -47,7 +47,7 @@ demos/react-ui/
 
 ## The Agent: `.kilo/agents/react-frontend.md`
 
-This role is pinned to `gpt-5.2`, with `gpt-5.4-mini` as a deliberate fallback for sharper
+This role is pinned to `gpt-5.2`, with `gpt-5-mini` as a deliberate fallback for sharper
 reasoning. It owns frontend work in `demos/react-ui/`. To extend the app, invoke it in Kilo Code:
 
 ```
@@ -56,12 +56,12 @@ using the data in src/data/models.js. Keep it consistent with the existing theme
 ```
 
 Kilo Code reads `.kilo/agents/react-frontend.md`, loads the global rules, and routes the work to
-`gpt-5.2` — escalating to `gpt-5.4-mini` only if the task needs it.
+`gpt-5.2` — escalating to `gpt-5-mini` only if the task needs it.
 
 ## The Routing Lesson
 
 Routine UI work — components, styling, wiring hooks — is a great fit for `gpt-5.2`. It's capable
-and cheaper than the orchestrator, and the `gpt-5.4-mini` fallback is there for the occasional
+and cheaper than the orchestrator, and the `gpt-5-mini` fallback is there for the occasional
 piece of trickier component logic. You would **not** route this to `gpt-5.4`: spending reasoning
 tokens on a theme toggle is exactly the waste this template teaches you to avoid.
 

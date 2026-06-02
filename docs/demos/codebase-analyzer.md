@@ -9,8 +9,8 @@ A standalone Python script (not a Kilo skill) runs the pipeline below, each stag
 | Stage | Work | Routes to |
 |-------|------|-----------|
 | Clone / resolve target | GitLab repo, local path, or bundled sample | *no model* |
-| Scan | one-paragraph project description from the README/manifests | `gpt-5.4-nano` |
-| Analyze each file | per-file summary, tags, import edges, and top-level functions/classes | `gpt-5.4-mini` |
+| Scan | one-paragraph project description from the README/manifests | `gpt-5-nano` |
+| Analyze each file | per-file summary, tags, import edges, and top-level functions/classes | `gpt-5-mini` |
 | Merge graph | deduplicate nodes, prune dangling edges | *no model* |
 | Classify architecture | group files into layers | `gpt-5.4` |
 
@@ -51,7 +51,7 @@ Each file is rendered as a **box containing its top-level functions (circles) an
 This demo is the template's thesis in one pipeline:
 
 - **Enumerating files and merging the graph are deterministic** — they run in plain Python, no model. A file walk or a dedup is not a judgment call.
-- **The per-file analysis is high-volume**, so it runs on the `gpt-5.4-mini` workhorse — never the orchestrator, even though it executes once per file.
+- **The per-file analysis is high-volume**, so it runs on the `gpt-5-mini` workhorse — never the orchestrator, even though it executes once per file.
 - **Classifying architecture needs to see the whole project at once** — genuine multi-file reasoning — so it, and only it, earns `gpt-5.4`.
 
 The expensive model runs once; the cheap model runs often; the deterministic work runs for free.

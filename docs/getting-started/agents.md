@@ -8,9 +8,9 @@ The Playbox treats agent configuration as **declarative, version-controlled code
 .kilo/
 ├── agents/
 │   ├── orchestrator.md          # Planner role (gpt-5.4)
-│   ├── everyday-dev.md          # Everyday coding (gpt-5.4-mini)
-│   ├── react-frontend.md        # React scaffold role (gpt-5.2, fallback gpt-5.4-mini)
-│   ├── summarizer.md            # Quick classification (gpt-5.4-nano)
+│   ├── everyday-dev.md          # Everyday coding (gpt-5-mini)
+│   ├── react-frontend.md        # React scaffold role (gpt-5.2, fallback gpt-5-mini)
+│   ├── summarizer.md            # Quick classification (gpt-5-nano)
 │   └── ...
 ├── rules/
 │   ├── coding-style.md          # Global code quality rules
@@ -73,7 +73,7 @@ for orchestration only. Route everyday coding to the developer role.
 ```markdown
 # Developer
 
-Model: gpt-5.4-mini
+Model: gpt-5-mini
 
 ## Purpose
 You implement features, write tests, fix bugs, and refactor code.
@@ -127,10 +127,9 @@ The `.kilo/kilo.jsonc` file maps logical model names to your Azure OpenAI deploy
   "apiKey": "${AZURE_OPENAI_API_KEY}",
   "deployments": {
     "gpt-5.4": "your-org-gpt-54-deployment",
-    "gpt-5.4-mini": "your-org-gpt-54-mini-deployment",
-    "gpt-5.4-nano": "your-org-gpt-54-nano-deployment",
-    "gpt-5.2": "your-org-gpt-52-deployment",
     "gpt-5-mini": "your-org-gpt-5-mini-deployment",
+    "gpt-5-nano": "your-org-gpt-5-nano-deployment",
+    "gpt-5.2": "your-org-gpt-52-deployment",
     "gpt-4o": "your-org-gpt-4o-deployment",
     "gpt-4o-mini": "your-org-gpt-4o-mini-deployment"
   }
@@ -139,14 +138,14 @@ The `.kilo/kilo.jsonc` file maps logical model names to your Azure OpenAI deploy
 
 At startup, Kilo Code verifies that each deployment name resolves to a live endpoint. A role can
 also declare a deliberate fallback — a second model to escalate to (the `react-frontend` role uses
-`gpt-5.2` with a `gpt-5.4-mini` fallback):
+`gpt-5.2` with a `gpt-5-mini` fallback):
 
 ```jsonc
 {
   "profiles": {
     "react-frontend": {
       "model": "gpt-5.2",
-      "fallback": "gpt-5.4-mini"
+      "fallback": "gpt-5-mini"
     }
   }
 }
@@ -181,7 +180,7 @@ This structure enforces a key principle: **each agent role has one model**.
 
 Why?
 - **Predictability** — you know which model will run (no surprise expensive calls)
-- **Cost control** — gpt-5.4 is routed only to orchestrator; everyday work uses gpt-5.4-mini
+- **Cost control** — gpt-5.4 is routed only to orchestrator; everyday work uses gpt-5-mini
 - **Auditability** — commit history shows who changed which agent's model assignment
 - **Testability** — you can swap a role's model (e.g., developer: gpt-5.4 → gpt-5.2) and re-run the same workflow
 

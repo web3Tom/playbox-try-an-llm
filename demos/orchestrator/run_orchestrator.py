@@ -1,10 +1,10 @@
 """
-Orchestrator demo: reasoning model (gpt-5.4) plans, then delegates to gpt-5.4-mini.
+Orchestrator demo: reasoning model (gpt-5.4) plans, then delegates to gpt-5-mini.
 
 Demonstrates the orchestrator pattern where:
   1. gpt-5.4 (reasoning model) reads the spec and produces a numbered implementation plan
   2. Plan is printed for inspection
-  3. (In a full pipeline) gpt-5.4-mini would implement from the plan
+  3. (In a full pipeline) gpt-5-mini would implement from the plan
 
 Env vars:
   AZURE_OPENAI_ENDPOINT: Azure OpenAI deployment endpoint
@@ -91,7 +91,7 @@ def main():
         print(plan)
         print("="*70 + "\n")
 
-        logger.info("Orchestrator demo complete. Plan ready for delegation to gpt-5.4-mini.")
+        logger.info("Orchestrator demo complete. Plan ready for delegation to gpt-5-mini.")
 
     except Exception as e:
         logger.error(f"Orchestrator failed: {e}")

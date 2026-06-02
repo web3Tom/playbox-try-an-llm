@@ -34,7 +34,7 @@ This is the canonical case for the `orchestrator` role.
 | Job | Role / model | Why |
 |-----|--------------|-----|
 | Read the spec, produce the plan | `orchestrator` → `gpt-5.4` (reasoning) | Planning is the *only* job worth the reasoning premium |
-| Implement from the plan | `everyday-dev` → `gpt-5.4-mini` | Mechanical translation of an existing plan — the workhorse handles it |
+| Implement from the plan | `everyday-dev` → `gpt-5-mini` | Mechanical translation of an existing plan — the workhorse handles it |
 
 The point: **don't run the whole pipeline on `gpt-5.4`.** Use it for the plan, then delegate. See
 the root `AGENTS.md` Heuristics table and `.kilo/agents/orchestrator.md` for the role definition.

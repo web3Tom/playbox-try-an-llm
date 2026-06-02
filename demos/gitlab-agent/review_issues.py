@@ -1,5 +1,5 @@
 """
-GitLab API integration demo: fetch project issues and summarize with gpt-5.4-mini.
+GitLab API integration demo: fetch project issues and summarize with gpt-5-mini.
 
 Demonstrates enterprise API integration for issue triage and summarization workflows.
 Requires authentication via GitLab PAT and project configuration.
@@ -82,7 +82,7 @@ def fetch_issues(pat: str, project_id: str, api_url: str, page: int = 1) -> list
 
 
 def summarize_issues(client: AzureOpenAI, issues: list[dict]) -> str:
-    """Summarize issues using gpt-5.4-mini."""
+    """Summarize issues using gpt-5-mini."""
     if not issues:
         logger.warning("No issues to summarize")
         return "No issues found."
@@ -93,9 +93,9 @@ def summarize_issues(client: AzureOpenAI, issues: list[dict]) -> str:
     ])
 
     try:
-        logger.info(f"Summarizing {len(issues)} issues with gpt-5.4-mini...")
+        logger.info(f"Summarizing {len(issues)} issues with gpt-5-mini...")
         response = client.responses.create(
-            model="gpt-5.4-mini",
+            model="gpt-5-mini",
             instructions="You are a project manager. Summarize the given issues concisely.",
             input=f"Summarize these issues:\n\n{issue_text}",
         )

@@ -2,7 +2,7 @@
 
 ## Goal
 
-Demonstrates enterprise API integration: fetch GitLab project issues and summarize them using `gpt-5.4-mini`. Illustrates how LLMs can be embedded in DevOps workflows for issue triage.
+Demonstrates enterprise API integration: fetch GitLab project issues and summarize them using `gpt-5-mini`. Illustrates how LLMs can be embedded in DevOps workflows for issue triage.
 
 ## How to Run
 
@@ -22,7 +22,7 @@ uv run python demos/gitlab-agent/review_issues.py
 
 1. **Authenticate**: Use PAT to authenticate with GitLab
 2. **Fetch Issues**: Retrieve issues from specified project (paginated)
-3. **Summarize**: Pass issue list to `gpt-5.4-mini` for summarization
+3. **Summarize**: Pass issue list to `gpt-5-mini` for summarization
 4. **Output**: Print concise issue summary
 
 ## Pagination

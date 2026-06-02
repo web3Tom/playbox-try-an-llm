@@ -7,17 +7,17 @@ export const routingRules = [
   {
     id: 2,
     task: 'Everyday dev / coding',
-    model: 'gpt-5.4-mini'
+    model: 'gpt-5-mini'
   },
   {
     id: 3,
     task: 'Summarization / quick classification',
-    model: 'gpt-5.4-nano'
+    model: 'gpt-5-nano'
   },
   {
     id: 4,
     task: 'UI / frontend work',
-    model: 'gpt-5.2 (fallback gpt-5.4-mini)'
+    model: 'gpt-5.2 (fallback gpt-5-mini)'
   },
   {
     id: 5,

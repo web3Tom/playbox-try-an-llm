@@ -23,8 +23,8 @@ route in the Playbox — every turn you spend here should be earning it.
    checkable outcomes. If the request is ambiguous, surface the options and ask before
    dispatching — do not pick silently.
 2. **Decompose** into the smallest subtasks that each map to one specialist role.
-3. **Delegate** each subtask to a cheaper model — `everyday-dev` (`gpt-5.4-mini` / `gpt-5.2`)
-   for code, `summarizer` (`gpt-5.4-nano`) for digests. Give a self-contained brief: goal,
+3. **Delegate** each subtask to a cheaper model — `everyday-dev` (`gpt-5-mini` / `gpt-5.2`)
+   for code, `summarizer` (`gpt-5-nano`) for digests. Give a self-contained brief: goal,
    files, constraints, expected output. The sub-agent does not see this conversation.
 4. **Verify independently.** Do not trust a "done" at face value — inspect the output against
    the success criteria before acting on it.

@@ -52,8 +52,8 @@ plus a matching page in the docs site. They are ordered roughly easiest → most
 | Demo | What it shows | Routes to | Run it |
 |------|---------------|-----------|--------|
 | **codebase-analyzer** | Multi-stage pipeline that maps a repo into an interactive graph — files containing their functions/classes; the flagship routing showcase | `nano` → `mini` → `gpt-5.4` (+ pure code) | `uv run python demos/codebase-analyzer/analyze.py` |
-| **orchestrator** | The planning pattern: a reasoning model plans, then delegates code-gen down to a cheaper model | `gpt-5.4` → delegates to `gpt-5.4-mini` | `uv run python demos/orchestrator/run_orchestrator.py` |
-| **gitlab-agent** | Enterprise API integration — read & summarize project issues via a GitLab PAT | `gpt-5.4-mini` | `uv run python demos/gitlab-agent/review_issues.py` |
+| **orchestrator** | The planning pattern: a reasoning model plans, then delegates code-gen down to a cheaper model | `gpt-5.4` → delegates to `gpt-5-mini` | `uv run python demos/orchestrator/run_orchestrator.py` |
+| **gitlab-agent** | Enterprise API integration — read & summarize project issues via a GitLab PAT | `gpt-5-mini` | `uv run python demos/gitlab-agent/review_issues.py` |
 | **rag-embeddings** | Ground answers in your own docs with an in-memory vector store (no external DB) | `text-embedding-3-large` | `uv run python demos/rag-embeddings/rag_query.py` |
 | **transcription** | Audio transcription with speaker diarization | `gpt-4o-transcribe-diarize` | `uv run python demos/transcription/transcribe.py` |
 | **react-ui** | Runnable Vite+React app (theme toggle + model-routing card) governed by a Kilo role file | `gpt-5.2` (`react-frontend` role) | `cd demos/react-ui && npm install && npm run dev` (port 5173) |

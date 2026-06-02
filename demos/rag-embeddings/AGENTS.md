@@ -7,7 +7,7 @@
 ## Overview
 Retrieval-Augmented Generation against an **in-memory** ChromaDB collection. Sample policy
 documents are embedded with `text-embedding-3-large`, a query is embedded and matched (top-1
-cosine), and `gpt-5.4-mini` answers using *only* the retrieved context. Shows two distinct model
+cosine), and `gpt-5-mini` answers using *only* the retrieved context. Shows two distinct model
 routes — embeddings vs. generation — in one pipeline.
 <!-- AGENTS-GENERATED:END overview -->
 
@@ -15,7 +15,7 @@ routes — embeddings vs. generation — in one pipeline.
 ## Key Files
 | File | Purpose |
 |------|---------|
-| `rag_query.py` | Entry point. `setup_collection` (embed + ingest) → `query_and_answer` (retrieve + `gpt-5.4-mini`) |
+| `rag_query.py` | Entry point. `setup_collection` (embed + ingest) → `query_and_answer` (retrieve + `gpt-5-mini`) |
 | `data/` | Drop real documents here; update `setup_collection` to ingest them (sample docs are hard-coded) |
 | `README.md` | Human-facing walkthrough |
 <!-- AGENTS-GENERATED:END filemap -->
@@ -34,7 +34,7 @@ Requires `chromadb` (`uv add chromadb` if the import fails).
 |-----|--------------|-----|
 | Embed docs + query | `text-embedding-3-large` | A specialized *embeddings* route — not a chat model |
 | Retrieve (cosine top-1) | *no model* — ChromaDB | Vector math is deterministic; never ask an LLM to "rank" |
-| Answer from context | `everyday-dev` → `gpt-5.4-mini` | Grounded generation is the judgment call |
+| Answer from context | `everyday-dev` → `gpt-5-mini` | Grounded generation is the judgment call |
 
 The lesson: a RAG pipeline mixes **three** routes. Don't collapse them onto one expensive model.
 

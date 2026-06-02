@@ -14,7 +14,7 @@ export default function App() {
       </main>
 
       <footer className="app-footer">
-        <p>Edit this app with the Kilo Code react-frontend role (gpt-5.2, fallback gpt-5.4-mini).</p>
+        <p>Edit this app with the Kilo Code react-frontend role (gpt-5.2, fallback gpt-5-mini).</p>
       </footer>
     </div>
   )

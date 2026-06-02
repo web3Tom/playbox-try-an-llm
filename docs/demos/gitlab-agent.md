@@ -6,7 +6,7 @@ Integrate with **internal GitLab APIs** to read issues, summarize them, and cate
 
 This demo:
 1. Fetches open issues from your GitLab project (via PAT authentication)
-2. Sends each issue to **gpt-5.4-mini** for summarization and priority tagging
+2. Sends each issue to **gpt-5-mini** for summarization and priority tagging
 3. Groups issues by priority (Critical, High, Medium, Low)
 4. Outputs a **summary report** you can share with the team
 
@@ -37,7 +37,7 @@ Generated: 2026-05-31
 
 Learn:
 - How to authenticate with GitLab API using a Personal Access Token
-- When to use a fast summarization model (gpt-5.4-nano or gpt-5.4-mini)
+- When to use a fast summarization model (gpt-5-nano or gpt-5-mini)
 - How to batch API requests efficiently
 - Organizing agent output into actionable reports
 
@@ -67,7 +67,7 @@ uv run python demos/gitlab-agent/main.py
 The script will:
 1. Authenticate using `GITLAB_PAT`
 2. Fetch all open issues in project `GITLAB_PROJECT_ID`
-3. Send each to gpt-5.4-mini for summarization (in parallel batches)
+3. Send each to gpt-5-mini for summarization (in parallel batches)
 4. Save the report to `output_gitlab_summary.md`
 
 ### Sample Execution
@@ -85,7 +85,7 @@ Summarizing issues (batch 3/3)...
 ✓ Processed 6 issues
 
 Report saved to: output_gitlab_summary.md
-Total cost: ~1 credit (gpt-5.4-mini, parallelized)
+Total cost: ~1 credit (gpt-5-mini, parallelized)
 ```
 
 ## Code Structure
@@ -94,21 +94,21 @@ Total cost: ~1 credit (gpt-5.4-mini, parallelized)
 demos/gitlab-agent/
 ├── main.py                  # Entry point
 ├── gitlab_client.py         # GitLab API wrapper (PAT auth)
-├── summarizer.py            # gpt-5.4-mini summarization logic
+├── summarizer.py            # gpt-5-mini summarization logic
 ├── report_generator.py      # Markdown report formatting
 └── config.py                # Env var loading
 ```
 
 ## The Routing Lesson
 
-This demo shows **why gpt-5.4-nano or gpt-5.4-mini is perfect for summarization**:
+This demo shows **why gpt-5-nano or gpt-5-mini is perfect for summarization**:
 
 - You need to classify many issues quickly (18 issues, ~1 second each)
 - Reasoning is not needed (no decomposition or complex logic)
 - Cost savings are dramatic: gpt-5.4 would cost 50× more and add 30s latency
 
 **Avoid:** Using gpt-5.4 to summarize all issues (expensive, slow).
-**Prefer:** gpt-5.4-mini in parallel batches (fast, cheap, same quality).
+**Prefer:** gpt-5-mini in parallel batches (fast, cheap, same quality).
 
 ## Network Isolation
 

@@ -13,8 +13,8 @@ logger = logging.getLogger(__name__)
 # Pricing in USD per 1K tokens (sandbox/demonstration rates)
 COST_RATES = {
     "gpt-5.4": {"prompt": 0.01, "completion": 0.03},
-    "gpt-5.4-mini": {"prompt": 0.001, "completion": 0.002},
-    "gpt-5.4-nano": {"prompt": 0.0005, "completion": 0.001},
+    "gpt-5-mini": {"prompt": 0.001, "completion": 0.002},
+    "gpt-5-nano": {"prompt": 0.0005, "completion": 0.001},
     "gpt-5.2": {"prompt": 0.001, "completion": 0.002},
     "text-embedding-3-large": {"prompt": 0.00013, "completion": 0.0}
 }

@@ -8,7 +8,7 @@ This demo implements a classic agent pattern:
 
 1. **Orchestrator (gpt-5.4)** receives a high-level request
 2. Breaks it into subtasks and decides which specialist should handle each
-3. **Delegates to Developer (gpt-5.4-mini)** for implementation
+3. **Delegates to Developer (gpt-5-mini)** for implementation
 4. Returns the final result
 
 ### Example Flow
@@ -45,7 +45,7 @@ uv run python demos/orchestrator/main.py
 
 This script:
 1. Defines an orchestrator agent (gpt-5.4) with a set of delegation rules
-2. Defines a developer agent (gpt-5.4-mini) with implementation instructions
+2. Defines a developer agent (gpt-5-mini) with implementation instructions
 3. Submits a sample task: "Implement a CI/CD status checker"
 4. Prints the orchestrator's plan and the developer's output
 
@@ -90,7 +90,7 @@ demos/orchestrator/
 **Key insight:** You use gpt-5.4's reasoning tokens only for decisions that require it.
 
 - **Use gpt-5.4 for:** Decomposing a complex problem, routing between teams, architectural decisions
-- **Use gpt-5.4-mini for:** Writing the actual code, fixing bugs, refactoring
+- **Use gpt-5-mini for:** Writing the actual code, fixing bugs, refactoring
 
 In this demo, you see why blindly using gpt-5.4 for everything would waste money and add latency.
 

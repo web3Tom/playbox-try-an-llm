@@ -15,7 +15,7 @@ uv run python demos/rag-embeddings/rag_query.py
 1. **Ingest Documents**: Sample policy documents are embedded using `text-embedding-3-large` and stored in an in-memory ChromaDB collection.
 2. **Query**: User query is embedded and compared against stored documents.
 3. **Retrieve**: Top-1 most similar document is retrieved.
-4. **Answer**: `gpt-5.4-mini` generates a response using only the retrieved context.
+4. **Answer**: `gpt-5-mini` generates a response using only the retrieved context.
 
 ## Vector Store
 

@@ -50,8 +50,8 @@ The dashboard port (5174) is pre-forwarded in `devfile.yaml`.
 | Stage | Role / model | Why |
 |-------|--------------|-----|
 | Enumerate files, merge graph | *no model* — Python | Deterministic transforms stay in code |
-| Scan (project description) | `summarizer` → `gpt-5.4-nano` | Cheap, classification-grade summarization |
-| Analyze each file (the bulk) | `everyday-dev` → `gpt-5.4-mini` | High-volume workhorse — runs once per file, never the orchestrator. The same call also returns the file's functions/classes (members), so modules cost no extra request |
+| Scan (project description) | `summarizer` → `gpt-5-nano` | Cheap, classification-grade summarization |
+| Analyze each file (the bulk) | `everyday-dev` → `gpt-5-mini` | High-volume workhorse — runs once per file, never the orchestrator. The same call also returns the file's functions/classes (members), so modules cost no extra request |
 | Classify architecture | `orchestrator` → `gpt-5.4` | The one step needing whole-project reasoning earns the expensive model |
 
 The lesson in one line: **the expensive model runs once; the cheap model runs

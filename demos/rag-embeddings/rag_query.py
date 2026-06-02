@@ -108,7 +108,7 @@ def query_and_answer(client: AzureOpenAI, collection: chromadb.Collection, query
         logger.info(f"Retrieved context: {context}")
 
         response = client.responses.create(
-            model="gpt-5.4-mini",
+            model="gpt-5-mini",
             instructions="You are a helpful assistant. Answer only using the provided context.",
             input=f"Context: {context}\n\nQuestion: {query}",
         )

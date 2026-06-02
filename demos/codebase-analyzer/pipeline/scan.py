@@ -1,4 +1,4 @@
-"""Scan stage [gpt-5.4-nano] — summarize the project from its README/manifests.
+"""Scan stage [gpt-5-nano] — summarize the project from its README/manifests.
 
 Reading the files is deterministic; turning prose into a one-paragraph
 description is the genuine (cheap) judgment call, so it routes to nano.

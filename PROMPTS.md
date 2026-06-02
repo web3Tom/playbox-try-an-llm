@@ -11,13 +11,13 @@ prompt notes the **model to route to**, because picking the right model is the w
 > **[Target Audience]**. Include: Executive Summary, User Stories, Out of Scope, Success Metrics,
 > and Technical Considerations. Use clear, enterprise-ready language.
 
-### 2. Summarize a meeting transcript — *route to `gpt-5.4-nano`*
+### 2. Summarize a meeting transcript — *route to `gpt-5-nano`*
 > Summarize the following transcript. Give a 3-sentence executive summary, then a bulleted list
 > of action items with assigned owners where mentioned.
 >
 > [Paste transcript here]
 
-### 3. Extract structured data — *route to `gpt-5.2` or `gpt-5.4-mini`*
+### 3. Extract structured data — *route to `gpt-5.2` or `gpt-5-mini`*
 > Extract all tools, software, and programming languages mentioned in the following text. Output
 > the result strictly as a JSON array of strings.
 >
@@ -25,7 +25,7 @@ prompt notes the **model to route to**, because picking the right model is the w
 
 ## For Developers
 
-### 4. Write a unit test suite — *route to `gpt-5.4-mini`*
+### 4. Write a unit test suite — *route to `gpt-5-mini`*
 > Review `[filename.py]`. Write a pytest suite for the primary functions. Cover edge cases for
 > **[specific constraint, e.g. null values, network timeouts]**. Each test must encode *why* the
 > behavior matters, not just that a value matches.
@@ -38,4 +38,4 @@ prompt notes the **model to route to**, because picking the right model is the w
 
 ### 6. Plan, then delegate — *start on `gpt-5.4`, delegate down*
 > Act as the Orchestrator (`.kilo/agents/orchestrator.md`). Read `demos/orchestrator/spec.md`,
-> produce a numbered plan, and for step 1 delegate the code generation to `gpt-5.4-mini`.
+> produce a numbered plan, and for step 1 delegate the code generation to `gpt-5-mini`.

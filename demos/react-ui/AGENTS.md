@@ -40,7 +40,7 @@ No env vars, no secrets — entirely static.
 | Job | Role / model | Why |
 |-----|--------------|-----|
 | Build/extend components, styling, hooks | `react-frontend` → `gpt-5.2` | Capable and cheaper than the orchestrator for routine UI |
-| Trickier component logic | fallback → `gpt-5.4-mini` | Deliberate escalation when reasoning is needed |
+| Trickier component logic | fallback → `gpt-5-mini` | Deliberate escalation when reasoning is needed |
 
 The lesson: **do not route a theme toggle to `gpt-5.4`.** Spending reasoning tokens on routine UI is
 exactly the waste this template teaches against. Invoke the role with `@react-frontend …`; Kilo reads

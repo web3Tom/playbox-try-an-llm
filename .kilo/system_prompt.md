@@ -20,9 +20,9 @@ Match the model to the job — never default everything to the most powerful mod
 | Task | Model | Note |
 |------|-------|------|
 | Multi-step planning / orchestration | `gpt-5.4` | Reasoning model; high cost — route sparingly |
-| Everyday dev / coding | `gpt-5.4-mini` | The workhorse for routine implementation |
-| UI / frontend work | `gpt-5.2` | Fallback `gpt-5.4-mini` for harder reasoning |
-| Summarization / quick classification | `gpt-5.4-nano` | Lowest latency and cost |
+| Everyday dev / coding | `gpt-5-mini` | The workhorse for routine implementation |
+| UI / frontend work | `gpt-5.2` | Fallback `gpt-5-mini` for harder reasoning |
+| Summarization / quick classification | `gpt-5-nano` | Lowest latency and cost |
 | Audio / transcription | `gpt-4o-transcribe-diarize` | Specialized audio / diarization model |
 | RAG / embeddings | `text-embedding-3-large` | Embeddings for retrieval |
 
