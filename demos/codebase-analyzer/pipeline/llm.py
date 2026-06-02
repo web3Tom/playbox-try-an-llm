@@ -21,6 +21,8 @@ logger = logging.getLogger(__name__)
 # Stage -> model. Keep these in lockstep with `.kilo/kilo.jsonc` profiles.
 ROLE_MODELS = {
     "scan": "gpt-5-nano",          # summarizer role: cheap, classification-grade
+    "select": "gpt-5-nano",        # summarizer role: triage files by significance
+    "describe": "gpt-5-nano",      # summarizer role: infer description from code evidence
     "analyze": "gpt-5-mini",       # everyday-dev role: the high-volume workhorse
     "architecture": "gpt-5.4",       # orchestrator role: holistic reasoning
     "tour": "gpt-5.4",               # orchestrator role: whole-project reading order
