@@ -2,10 +2,12 @@
 
 For each file we build one graph node deterministically (so every analyzed file
 is guaranteed a node) and ask the model only for the judgment parts: summary,
-complexity, tags, and which sibling files it imports. Import targets are the
-model's best guess at repo-relative paths; merge.py later prunes the ones that
-don't resolve. This is the workhorse, so it routes to mini — never the
-orchestrator, even though it runs once per file.
+complexity, tags, which sibling files it imports, and the file's top-level
+members (functions and classes). Import targets are the model's best guess at
+repo-relative paths; merge.py later prunes the ones that don't resolve. Members
+become `function`/`class` nodes sharing the file's path, so the dashboard can
+nest them inside their file. This is the workhorse, so it routes to mini — never
+the orchestrator, even though it runs once per file.
 """
 
 from __future__ import annotations
@@ -23,6 +25,47 @@ logger = logging.getLogger(__name__)
 
 def file_node_id(rel_path: str) -> str:
     return f"file:{rel_path}"
+
+
+# Member types the analyzer is allowed to emit (a subset of schema.NODE_TYPES).
+_MEMBER_TYPES = {"function", "class"}
+
+
+def _member_nodes(rel_path: str, raw_members: list) -> list[Node]:
+    """Build `function`/`class` nodes for a file's top-level members.
+
+    Each member shares the file's ``filePath`` (the dashboard's grouping key) and
+    gets a stable, unique id like ``function:app.py::create_app``. Malformed
+    entries (missing name / bad type) are dropped, never allowed to poison the
+    graph. Layer is assigned later, inherited from the file in the architecture
+    stage.
+    """
+    nodes: list[Node] = []
+    taken: set[str] = set()
+    for raw in raw_members or []:
+        if not isinstance(raw, dict):
+            continue
+        name = str(raw.get("name", "")).strip()
+        mtype = str(raw.get("type", "")).strip().lower()
+        if not name or mtype not in _MEMBER_TYPES:
+            continue
+        base = f"{mtype}:{rel_path}::{name}"
+        node_id, n = base, 2
+        while node_id in taken:  # keep ids unique if a name repeats in the file
+            node_id, n = f"{base}#{n}", n + 1
+        taken.add(node_id)
+        nodes.append(
+            Node(
+                id=node_id,
+                type=mtype,
+                name=name,
+                filePath=rel_path,
+                summary=str(raw.get("summary", "")).strip(),
+                tags=[mtype],
+                complexity=normalize_complexity(raw.get("complexity")),
+            )
+        )
+    return nodes
 
 
 def analyze_files(
@@ -60,7 +103,9 @@ def analyze_files(
             for imp in result.get("imports", [])
             if isinstance(imp, str) and imp.strip()
         ]
-        node_groups.append([node])
+        # The file node plus its top-level members share one group; merge() keeps
+        # them together and dedups by id.
+        node_groups.append([node, *_member_nodes(rel, result.get("members", []))])
         edge_groups.append(edges)
 
     return node_groups, edge_groups

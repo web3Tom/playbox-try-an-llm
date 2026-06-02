@@ -2,7 +2,7 @@
   "version": "1.0.0",
   "project": {
     "name": "sample-repo",
-    "description": "A tiny in-memory Todo REST API used as the bundled analyzer target. Layered into entrypoint, API, service, model, and storage. (This is committed sample output — run analyze.py to regenerate it for a real repo.)",
+    "description": "A tiny in-memory Todo REST API used as the bundled analyzer target. Layered into entrypoint, API, service, model, and storage; each file lists its top-level functions and classes. (This is committed sample output — run analyze.py to regenerate it for a real repo.)",
     "languages": ["Python"],
     "fileCount": 5,
     "analyzedFileCount": 5,
@@ -20,6 +20,26 @@
       "layer": "layer:0"
     },
     {
+      "id": "function:app.py::create_app",
+      "type": "function",
+      "name": "create_app",
+      "filePath": "app.py",
+      "summary": "Wires the router and returns the configured application.",
+      "tags": ["function"],
+      "complexity": "simple",
+      "layer": "layer:0"
+    },
+    {
+      "id": "function:app.py::main",
+      "type": "function",
+      "name": "main",
+      "filePath": "app.py",
+      "summary": "Process entrypoint that builds and runs the app.",
+      "tags": ["function"],
+      "complexity": "simple",
+      "layer": "layer:0"
+    },
+    {
       "id": "file:api/routes.py",
       "type": "file",
       "name": "routes.py",
@@ -30,12 +50,42 @@
       "layer": "layer:1"
     },
     {
+      "id": "class:api/routes.py::Router",
+      "type": "class",
+      "name": "Router",
+      "filePath": "api/routes.py",
+      "summary": "Holds the service and exposes the registered routes.",
+      "tags": ["class"],
+      "complexity": "moderate",
+      "layer": "layer:1"
+    },
+    {
+      "id": "function:api/routes.py::build_router",
+      "type": "function",
+      "name": "build_router",
+      "filePath": "api/routes.py",
+      "summary": "Constructs a Router backed by a fresh TodoService.",
+      "tags": ["function"],
+      "complexity": "simple",
+      "layer": "layer:1"
+    },
+    {
       "id": "file:services/todo_service.py",
       "type": "file",
       "name": "todo_service.py",
       "filePath": "services/todo_service.py",
       "summary": "Business logic for listing, adding, and removing todos.",
       "tags": ["service", "business-logic"],
+      "complexity": "moderate",
+      "layer": "layer:2"
+    },
+    {
+      "id": "class:services/todo_service.py::TodoService",
+      "type": "class",
+      "name": "TodoService",
+      "filePath": "services/todo_service.py",
+      "summary": "Coordinates Todo operations over the repository.",
+      "tags": ["class"],
       "complexity": "moderate",
       "layer": "layer:2"
     },
@@ -50,12 +100,32 @@
       "layer": "layer:3"
     },
     {
+      "id": "class:storage/repository.py::TodoRepository",
+      "type": "class",
+      "name": "TodoRepository",
+      "filePath": "storage/repository.py",
+      "summary": "Stores, retrieves, and deletes Todo entities in memory.",
+      "tags": ["class"],
+      "complexity": "moderate",
+      "layer": "layer:3"
+    },
+    {
       "id": "file:models/todo.py",
       "type": "file",
       "name": "todo.py",
       "filePath": "models/todo.py",
       "summary": "The Todo domain model dataclass.",
       "tags": ["model"],
+      "complexity": "simple",
+      "layer": "layer:4"
+    },
+    {
+      "id": "class:models/todo.py::Todo",
+      "type": "class",
+      "name": "Todo",
+      "filePath": "models/todo.py",
+      "summary": "Core Todo entity with id, title, and done state.",
+      "tags": ["class"],
       "complexity": "simple",
       "layer": "layer:4"
     }

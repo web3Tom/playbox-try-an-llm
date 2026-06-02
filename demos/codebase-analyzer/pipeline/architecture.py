@@ -23,7 +23,9 @@ logger = logging.getLogger(__name__)
 def classify_layers(client: AzureOpenAI, nodes: list[Node]) -> list[Layer]:
     """Group file nodes into architectural layers and stamp each node's `layer`.
 
-    Mutates `nodes` in place to set `node.layer`. Returns the Layer list. Any
+    Only file nodes are classified by the model (a file's members belong to the
+    same layer as the file). Mutates `nodes` in place to set `node.layer` and
+    propagates each file's layer to its members. Returns the Layer list. Any
     file the model forgot is logged (fail loud) but does not abort the run.
     """
     file_nodes = [n for n in nodes if n.type == "file"]
@@ -52,5 +54,11 @@ def classify_layers(client: AzureOpenAI, nodes: list[Node]) -> list[Layer]:
     missing = set(by_path) - assigned
     if missing:
         logger.warning("Architecture stage left %d file(s) unassigned: %s", len(missing), sorted(missing))
+
+    # Members inherit their file's layer (same colour, same grouping).
+    file_layer = {n.filePath: n.layer for n in file_nodes}
+    for node in nodes:
+        if node.type != "file":
+            node.layer = file_layer.get(node.filePath)
 
     return layers

@@ -10,7 +10,7 @@ A standalone Python script (not a Kilo skill) runs the pipeline below, each stag
 |-------|------|-----------|
 | Clone / resolve target | GitLab repo, local path, or bundled sample | *no model* |
 | Scan | one-paragraph project description from the README/manifests | `gpt-5.4-nano` |
-| Analyze each file | per-file summary, tags, and import edges | `gpt-5.4-mini` |
+| Analyze each file | per-file summary, tags, import edges, and top-level functions/classes | `gpt-5.4-mini` |
 | Merge graph | deduplicate nodes, prune dangling edges | *no model* |
 | Classify architecture | group files into layers | `gpt-5.4` |
 
@@ -43,6 +43,8 @@ npm run dev      # http://localhost:5174 (pre-forwarded in devfile.yaml)
 ```
 
 The dashboard ships with a committed sample graph, so `npm run dev` renders something immediately even before you run the analyzer.
+
+Each file is rendered as a **box containing its top-level functions (circles) and classes (hexagons)**, with import edges between the boxes. Search to highlight nodes, use the **Show modules** toggle to collapse to file level, and click any file or module for details.
 
 ## The Routing Lesson
 

@@ -11,11 +11,27 @@ Analyze:
   (e.g. "src/utils/auth.py"). Only include intra-repository imports — ignore
   third-party/standard-library imports. If unsure of the exact path, give your
   closest guess; wrong guesses are dropped downstream, so guess rather than omit.
+- Its TOP-LEVEL members — the functions and classes it defines. Rules:
+  - Only TOP-LEVEL definitions: not methods inside a class, not inner/local
+    functions. A class is ONE entry; do not list its methods separately.
+  - type is exactly "function" or "class".
+  - Give each a one-sentence summary and a complexity of
+    "simple" | "moderate" | "complex".
+  - If the file defines no top-level functions or classes (pure config, script
+    glue, constants), return an empty list. Never invent members.
 
 Respond with a JSON object only:
 {
   "summary": "<1-2 sentences>",
   "complexity": "simple" | "moderate" | "complex",
   "tags": ["<tag>", ...],
-  "imports": ["<relative/path/to/file>", ...]
+  "imports": ["<relative/path/to/file>", ...],
+  "members": [
+    {
+      "name": "<identifier>",
+      "type": "function" | "class",
+      "summary": "<one sentence>",
+      "complexity": "simple" | "moderate" | "complex"
+    }
+  ]
 }

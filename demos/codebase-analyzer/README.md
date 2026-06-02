@@ -10,7 +10,7 @@ core idea — **route each task to the cheapest model that can do it**.
 ```
 clone / resolve target        [no model]   GitLab repo, local path, or bundled sample
   └─ scan                      gpt-5.4-nano  one-paragraph project description
-  └─ analyze each file         gpt-5.4-mini  per-file summary, tags, import edges
+  └─ analyze each file         gpt-5.4-mini  per-file summary, tags, imports, functions/classes
   └─ merge graph               [no model]    dedup nodes, prune dangling edges
   └─ classify architecture     gpt-5.4       group files into layers
   └─ write knowledge-graph.json -> dashboard renders it
@@ -47,6 +47,11 @@ npm run dev      # http://localhost:5174 (pre-forwarded in devfile.yaml)
 
 The dashboard ships with a committed sample graph, so `npm run dev` shows
 something immediately even before you run the analyzer.
+
+In the graph, each file is a **box containing its top-level functions (circles)
+and classes (hexagons)**; import edges connect the boxes. Use the search field
+to highlight nodes, the **Show modules** toggle to collapse to file level, and
+click any file or module to inspect it in the sidebar.
 
 ## Environment variables
 
