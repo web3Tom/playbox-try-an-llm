@@ -7,15 +7,31 @@
 // baseUrl + apiKey come from the environment (.env). Kilo reads the provider's
 // `baseUrl`/`apiKey` from these env vars in the Playbox image.
 {
+  // Global default model (provider/model). Individual agents override per mode.
+  "model": "playbox-apim/gpt-5-mini",
+
   "provider": {
-    "id": "playbox-apim",
-    "type": "openai-compatible",
-    // Real base is injected via .env. AZURE_OPENAI_ENDPOINT is the bare resource base
-    // (…/playbox-ai-deployment); Kilo's openai-compatible client needs the /openai suffix,
-    // so it is appended here. The Python demos use the bare base (the Azure SDK adds /openai).
-    "baseUrl": "${AZURE_OPENAI_ENDPOINT}/openai", // e.g. https://<your-playbox-apim-endpoint>/playbox-ai-deployment/openai
-    "apiKey": "${AZURE_OPENAI_API_KEY}",
-    "apiVersion": "2025-04-01-preview"
+    "playbox-apim": {
+      "name": "Polestar Playbox (Azure OpenAI via APIM)",
+      // Real base is injected via .env. AZURE_OPENAI_ENDPOINT is the bare resource base
+      // (…/playbox-ai-deployment); the openai-compatible client needs the /openai suffix,
+      // appended here. DO NOT commit a real APIM host — placeholder/env only.
+      "options": {
+        "baseURL": "${AZURE_OPENAI_ENDPOINT}/openai", // e.g. https://<your-playbox-apim-endpoint>/playbox-ai-deployment/openai
+        "apiKey": "${AZURE_OPENAI_API_KEY}",           // APIM does not enforce a subscription key
+        "apiVersion": "2025-04-01-preview"
+      },
+      // Per-model capability + budget catalog. `limit.output` is the deployment's max
+      // output (reasoning + visible answer combined for reasoning models — see
+      // docs/adr/ADR-0001.md). Capabilities/budgets live here in the current schema;
+      // the old per-role `profiles` block did not survive the move to `agent`.
+      "models": {
+        "gpt-5.4":    { "id": "gpt-5.4",    "name": "GPT-5.4 (Playbox)",    "tool_call": true, "reasoning": true, "attachment": true,  "modalities": { "input": ["text", "image"], "output": ["text"] }, "limit": { "context": 128000, "output": 16384 } },
+        "gpt-5.2":    { "id": "gpt-5.2",    "name": "GPT-5.2 (Playbox)",    "tool_call": true, "reasoning": true, "attachment": true,  "modalities": { "input": ["text", "image"], "output": ["text"] }, "limit": { "context": 128000, "output": 16384 } },
+        "gpt-5-mini": { "id": "gpt-5-mini", "name": "GPT-5-mini (Playbox)", "tool_call": true, "reasoning": true, "attachment": false, "modalities": { "input": ["text"], "output": ["text"] },          "limit": { "context": 128000, "output": 16384 } },
+        "gpt-5-nano": { "id": "gpt-5-nano", "name": "GPT-5-nano (Playbox)", "tool_call": true, "reasoning": true, "attachment": false, "modalities": { "input": ["text"], "output": ["text"] },          "limit": { "context": 128000, "output": 16384 } }
+      }
+    }
   },
 
   // Agent (mode) definitions. The built-in `code` and `plan` agents are overridden

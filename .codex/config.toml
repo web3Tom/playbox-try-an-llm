@@ -1,9 +1,25 @@
-# OpenAI Codex CLI provider + model configuration for the Polestar Playbox.
+# OpenAI Codex project configuration for the Polestar Playbox.
 #
-# Mirror of .kilo/kilo.jsonc: same APIM gateway, same Azure-deployed models,
-# same per-role routing. Kilo expresses roles as `profiles`; Codex expresses
-# them as [profiles.*] selected with `codex --profile <role>`.
+# Project-local .codex/config.toml files can set project behavior such as the
+# default model, reasoning effort, approval policy, and sandbox mode.
 #
+# They cannot set provider/auth/profile configuration. Codex ignores
+# model_provider, model_providers, profile, and profiles in project-local config.
+# Put the APIM provider block in user/system config, for example:
+#   ~/.codex/config.toml
+#   /etc/codex/config.toml
+#   a DevPod-injected CODEX_HOME config.toml
+#
+# Default project model. This assumes a user/system config selects the
+# playbox-apim provider, or the extension model picker is pointed at that
+# provider by the DevPod harness.
+model                  = "gpt-5.4"
+model_reasoning_effort = "high"
+
+approval_policy = "on-request"
+sandbox_mode    = "workspace-write"
+
+# --- User/system config snippet: APIM provider -------------------------------
 # This file ships PLACEHOLDERS ONLY. The verified, working APIM host + key live
 # in your DevPod's harness config and are injected at runtime.
 # DO NOT commit a real APIM hostname or key here.
@@ -11,46 +27,38 @@
 # Codex does NOT interpolate ${ENV} inside base_url (unlike Kilo's baseUrl), so
 # the resource base is a literal placeholder the DevPod harness rewrites.
 # Targets APIM operation: POST .../openai/v1/responses
+#
+# model_provider = "playbox-apim"
+#
+# [model_providers.playbox-apim]
+# name         = "Polestar Playbox (Azure OpenAI via APIM)"
+# base_url     = "https://<your-playbox-apim-endpoint>/playbox-ai-deployment/openai"
+# wire_api     = "responses"
+# query_params = { "api-version" = "2025-04-01-preview" }
+#
+# APIM does not enforce a subscription key, so no env_key is set. If that
+# changes, add env_key in user/system config, not in this project file.
 
-# --- Default == kilo's primary role (orchestrator) ---------------------------
-model                  = "gpt-5.4"
-model_provider         = "playbox-apim"
-model_reasoning_effort = "high"
-
-approval_policy = "on-request"
-sandbox_mode    = "workspace-write"
-
-# --- Provider == kilo.jsonc provider (id: playbox-apim) ----------------------
-# Resource base WITHOUT the /openai suffix is AZURE_OPENAI_ENDPOINT in .env;
-# the /openai suffix is appended here, matching kilo.jsonc's baseUrl.
-# APIM does not enforce a subscription key, so no env_key is set.
-[model_providers.playbox-apim]
-name         = "Polestar Playbox (Azure OpenAI via APIM)"
-base_url     = "https://<your-playbox-apim-endpoint>/playbox-ai-deployment/openai"
-wire_api     = "responses"
-query_params = { "api-version" = "2025-04-01-preview" }
-
-# --- One profile per role == kilo.jsonc "profiles" ---------------------------
-# Codex has no per-model `limit` (context/output caps) or `fallback`, so those
-# kilo fields have no equivalent here — capabilities are discovered at runtime.
-[profiles.orchestrator]
-model                  = "gpt-5.4"
-model_provider         = "playbox-apim"
-model_reasoning_effort = "high"
-
-[profiles.everyday-dev]
-model                  = "gpt-5-mini"
-model_provider         = "playbox-apim"
-model_reasoning_effort = "low"
-
-[profiles.summarizer]
-model                  = "gpt-5-nano"
-model_provider         = "playbox-apim"
-model_reasoning_effort = "minimal"
-
-[profiles.react-frontend]
-# Kilo escalates to gpt-5-mini via `fallback`; Codex has no fallback —
-# switch to the everyday-dev profile manually when more reasoning is needed.
-model                  = "gpt-5.2"
-model_provider         = "playbox-apim"
-model_reasoning_effort = "low"
+# --- Optional role files -----------------------------------------------------
+# Codex 0.134.0+ no longer reads [profiles.<name>] from config.toml.
+# If CLI profile switching is available, create separate user-level files:
+#
+# ~/.codex/orchestrator.config.toml
+# model                  = "gpt-5.4"
+# model_provider         = "playbox-apim"
+# model_reasoning_effort = "high"
+#
+# ~/.codex/everyday-dev.config.toml
+# model                  = "gpt-5-mini"
+# model_provider         = "playbox-apim"
+# model_reasoning_effort = "low"
+#
+# ~/.codex/summarizer.config.toml
+# model                  = "gpt-5-nano"
+# model_provider         = "playbox-apim"
+# model_reasoning_effort = "minimal"
+#
+# ~/.codex/react-frontend.config.toml
+# model                  = "gpt-5.2"
+# model_provider         = "playbox-apim"
+# model_reasoning_effort = "low"

@@ -14,6 +14,7 @@ nav:
   - Getting Started:
     - Environment: getting-started/environment.md
     - Agents as Code: getting-started/agents.md
+    - Agent Extensions: getting-started/agent-extensions.md
   - Models & Routing: models.md
   - Demos:
     - Codebase Analyzer: demos/codebase-analyzer.md
