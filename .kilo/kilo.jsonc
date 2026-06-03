@@ -1,9 +1,8 @@
-// Kilo Code provider + model configuration for the Polestar Playbox.
+// Kilo Code provider + agent configuration for the Polestar Playbox.
 //
-// This file pins each role to a specific Azure-deployed model through the
-// Playbox APIM gateway. The verified, working values for the real gateway live
-// in your DevPod's harness config and are injected at runtime — DO NOT commit a
-// real APIM hostname or key here. This template ships placeholders only.
+// The verified, working gateway values live in your DevPod's harness config and
+// are injected at runtime — DO NOT commit a real APIM hostname or key here. This
+// template ships placeholders only.
 //
 // baseUrl + apiKey come from the environment (.env). Kilo reads the provider's
 // `baseUrl`/`apiKey` from these env vars in the Playbox image.
@@ -19,34 +18,58 @@
     "apiVersion": "2025-04-01-preview"
   },
 
-  // One profile per role. The `limit` block is the per-REQUEST budget:
-  //   - context = input + output combined (the deployment's context window)
-  //   - output  = max_completion_tokens (reasoning + visible answer COMBINED)
-  // For reasoning models (gpt-5.4) reasoning tokens are billed from `output`,
-  // so the orchestrator's output cap is raised to 32,768. See docs/adr/ADR-0001.md.
-  "profiles": {
-    "orchestrator": {
-      "model": "gpt-5.4",
-      "reasoningEffort": "high",
-      "limit": { "context": 128000, "output": 32768 }
+  // Agent (mode) definitions. The built-in `code` and `plan` agents are overridden
+  // here so the whole Playbox inherits Polestar's model routing. `code` is Kilo's
+  // startup default and stays so by keeping the built-in slug. Specialist roles
+  // (doc-writer, react-frontend, summarizer) are defined as .md files in .kilo/agents/.
+  //
+  // `model` uses the provider/model format (provider id: playbox-apim).
+  // `gpt-5.4` is a reasoning model — reasoning tokens are billed from the model's
+  // output budget (see docs/adr/ADR-0001.md). Per-model context/output caps belong
+  // in the provider model catalog, not on the agent, so they are not set here.
+  "agent": {
+    // Default agent: the cost-aware workhorse for routine implementation.
+    "code": {
+      "description": "Default implementation agent — routine coding, edits, and bug fixes on the cheaper gpt-5-mini route. The Playbox's daily driver.",
+      "model": "playbox-apim/gpt-5-mini",
+      "mode": "primary",
+      "temperature": 0.2,
+      "color": "#10B981",
+      "prompt": "You are the default implementation agent for the Polestar Playbox. Implement exactly the well-scoped task you are given — match existing conventions, validate external input and missing env vars, and never refactor adjacent code you were not asked to touch. After a change, run the smallest relevant check and show the output as evidence; never claim something works without it. For multi-step planning or architecture, hand back to the Plan agent (gpt-5.4) rather than reaching for the expensive route yourself.",
+      // Edit anything EXCEPT secret env files; .env.example (the committed template) stays editable.
+      "permission": {
+        "read": "allow",
+        "edit": {
+          ".env.example": "allow",
+          ".env": "deny",
+          ".env.*": "deny",
+          "**/.env": "deny",
+          "**/.env.*": "deny",
+          "*": "allow"
+        },
+        "bash": "ask"
+      }
     },
-    "everyday-dev": {
-      "model": "gpt-5-mini",
-      "reasoningEffort": "low",
-      "limit": { "context": 128000, "output": 8000 }
+
+    // Planning & architecture: the only route on the expensive reasoning model.
+    "plan": {
+      "description": "Planning and architecture agent — decomposes complex work into verifiable steps and designs solutions on the gpt-5.4 reasoning model. Plans and delegates; does not write code.",
+      "model": "playbox-apim/gpt-5.4",
+      "mode": "primary",
+      "color": "#6366F1",
+      "prompt": "You are the planning and architecture agent for the Polestar Playbox, running on gpt-5.4 — a reasoning model and the most expensive route. Restate the request as verifiable success criteria; if it is ambiguous, surface the options and ask before proceeding. Decompose the work into the smallest steps that each map to one specialist, and delegate implementation down to the Code agent (gpt-5-mini) — reserve this route for genuine planning and conflict resolution. Verify delegated work against the success criteria before synthesizing; if a step could not be completed or verified, say so with evidence. You edit Markdown only (plans and specs), never source.",
+      "permission": {
+        "read": "allow",
+        "edit": {
+          "*.md": "allow",
+          "*": "deny"
+        },
+        "bash": "ask"
+      }
     },
-    "summarizer": {
-      "model": "gpt-5-nano",
-      "reasoningEffort": "minimal",
-      "limit": { "context": 128000, "output": 4000 }
-    },
-    "react-frontend": {
-      // UI specialist: gpt-5.2 by default, escalate to gpt-5-mini for harder reasoning.
-      "model": "gpt-5.2",
-      "fallback": "gpt-5-mini",
-      "reasoningEffort": "low",
-      "limit": { "context": 128000, "output": 8000 }
-    }
+
+    // The legacy orchestrator built-in is deprecated — removed from the picker.
+    "orchestrator": { "disable": true }
   },
 
   // No external internet egress. Only the Playbox APIM gateway and internal

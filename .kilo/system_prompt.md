@@ -17,18 +17,19 @@ network-restricted enterprise AI sandbox. You run as a **Kilo Code** agent in a 
 
 Match the model to the job — never default everything to the most powerful model.
 
-| Task | Model | Note |
-|------|-------|------|
-| Multi-step planning / orchestration | `gpt-5.4` | Reasoning model; high cost — route sparingly |
-| Everyday dev / coding | `gpt-5-mini` | The workhorse for routine implementation |
-| UI / frontend work | `gpt-5.2` | Fallback `gpt-5-mini` for harder reasoning |
-| Summarization / quick classification | `gpt-5-nano` | Lowest latency and cost |
-| Audio / transcription | `gpt-4o-transcribe-diarize` | Specialized audio / diarization model |
-| RAG / embeddings | `text-embedding-3-large` | Embeddings for retrieval |
+| Task | Agent | Model | Note |
+|------|-------|-------|------|
+| Planning / architecture | `plan` | `gpt-5.4` | Reasoning model; high cost — route sparingly |
+| Implementation / coding (default) | `code` | `gpt-5-mini` | The workhorse for routine implementation |
+| UI / frontend work | `react-frontend` | `gpt-5.2` | Domain-scoped UI specialist |
+| Summarization / quick classification | `summarizer` | `gpt-5-nano` | Lowest latency and cost |
+| Audio / transcription | — | `gpt-4o-transcribe-diarize` | Specialized audio / diarization model |
+| RAG / embeddings | — | `text-embedding-3-large` | Embeddings for retrieval |
 
 `gpt-5.4` is a **reasoning model**: reasoning tokens are spent from the same per-request
-output budget as the visible answer. Size both the output cap and reasoning effort to the
-role (see `docs/adr/ADR-0001.md`).
+output budget as the visible answer. Size the output cap (in the provider model catalog) and
+the reasoning level (a runtime/provider setting, not a per-agent property) to the role — see
+`docs/adr/ADR-0001.md`.
 
 ## Working discipline
 
