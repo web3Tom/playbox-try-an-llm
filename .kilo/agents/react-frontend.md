@@ -1,6 +1,7 @@
 ---
 description: React/Vite UI specialist for demos/react-ui/ — builds clean, responsive components on the gpt-5.2 route.
 model: playbox-apim/gpt-5.2
+variant: high
 mode: primary
 temperature: 0.2
 color: "#06B6D4"

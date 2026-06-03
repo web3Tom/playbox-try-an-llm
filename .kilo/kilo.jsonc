@@ -26,8 +26,8 @@
       // docs/adr/ADR-0001.md). Capabilities/budgets live here in the current schema;
       // the old per-role `profiles` block did not survive the move to `agent`.
       "models": {
-        "gpt-5.4":    { "id": "gpt-5.4",    "name": "GPT-5.4 (Playbox)",    "tool_call": true, "reasoning": true, "attachment": true,  "modalities": { "input": ["text", "image"], "output": ["text"] }, "limit": { "context": 128000, "output": 32768 } }, // reasoning route — raised output per ADR-0001
-        "gpt-5.2":    { "id": "gpt-5.2",    "name": "GPT-5.2 (Playbox)",    "tool_call": true, "reasoning": true, "attachment": true,  "modalities": { "input": ["text", "image"], "output": ["text"] }, "limit": { "context": 128000, "output": 16384 } },
+        "gpt-5.4":    { "id": "gpt-5.4",    "name": "GPT-5.4 (Playbox)",    "tool_call": true, "reasoning": true, "attachment": true,  "modalities": { "input": ["text", "image"], "output": ["text"] }, "limit": { "context": 200000, "output": 32768 } }, // reasoning route — raised output per ADR-0001
+        "gpt-5.2":    { "id": "gpt-5.2",    "name": "GPT-5.2 (Playbox)",    "tool_call": true, "reasoning": true, "attachment": true,  "modalities": { "input": ["text", "image"], "output": ["text"] }, "limit": { "context": 200000, "output": 16384 } },
         "gpt-5-mini": { "id": "gpt-5-mini", "name": "GPT-5-mini (Playbox)", "tool_call": true, "reasoning": true, "attachment": false, "modalities": { "input": ["text"], "output": ["text"] },          "limit": { "context": 128000, "output": 16384 } },
         "gpt-5-nano": { "id": "gpt-5-nano", "name": "GPT-5-nano (Playbox)", "tool_call": true, "reasoning": true, "attachment": false, "modalities": { "input": ["text"], "output": ["text"] },          "limit": { "context": 128000, "output": 16384 } }
       }
