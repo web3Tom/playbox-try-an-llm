@@ -1,47 +1,43 @@
-# OpenAI Codex project configuration for the Polestar Playbox.
+# OpenAI Codex global configuration for the Polestar Playbox.
 #
-# Project-local .codex/config.toml files can set project behavior such as the
-# default model, reasoning effort, approval policy, and sandbox mode.
-#
-# They cannot set provider/auth/profile configuration. Codex ignores
-# model_provider, model_providers, profile, and profiles in project-local config.
-# Put the APIM provider block in user/system config, for example:
+# This file is intended to be copied or injected into a global Codex config
+# location, for example:
 #   ~/.codex/config.toml
 #   /etc/codex/config.toml
 #   a DevPod-injected CODEX_HOME config.toml
 #
-# Default project model. This assumes a user/system config selects the
-# playbox-apim provider, or the extension model picker is pointed at that
-# provider by the DevPod harness.
+# Do not rely on this provider/auth config from a repo-local .codex/config.toml;
+# Codex ignores model_provider and model_providers in project-local config.
+#
+# This file ships PLACEHOLDERS ONLY. The verified, working APIM host + key live
+# in your DevPod's harness config and are injected at runtime.
+# DO NOT commit a real APIM hostname or key here.
+#
+# Targets APIM operation: POST .../openai/v1/responses
+
+# --- Default == kilo's primary role (orchestrator) ---------------------------
 model                  = "gpt-5.4"
+model_provider         = "playbox-apim"
 model_reasoning_effort = "high"
 
 approval_policy = "on-request"
 sandbox_mode    = "workspace-write"
 
-# --- User/system config snippet: APIM provider -------------------------------
-# This file ships PLACEHOLDERS ONLY. The verified, working APIM host + key live
-# in your DevPod's harness config and are injected at runtime.
-# DO NOT commit a real APIM hostname or key here.
-#
+# --- Provider == kilo.jsonc provider (id: playbox-apim) ----------------------
 # Codex does NOT interpolate ${ENV} inside base_url (unlike Kilo's baseUrl), so
 # the resource base is a literal placeholder the DevPod harness rewrites.
-# Targets APIM operation: POST .../openai/v1/responses
-#
-# model_provider = "playbox-apim"
-#
-# [model_providers.playbox-apim]
-# name         = "Polestar Playbox (Azure OpenAI via APIM)"
-# base_url     = "https://<your-playbox-apim-endpoint>/playbox-ai-deployment/openai"
-# wire_api     = "responses"
-# query_params = { "api-version" = "2025-04-01-preview" }
-#
+[model_providers.playbox-apim]
+name         = "Polestar Playbox (Azure OpenAI via APIM)"
+base_url     = "https://<your-playbox-apim-endpoint>/playbox-ai-deployment/openai"
+wire_api     = "responses"
+query_params = { "api-version" = "2025-04-01-preview" }
+
 # APIM does not enforce a subscription key, so no env_key is set. If that
-# changes, add env_key in user/system config, not in this project file.
+# changes, add env_key here or use command-backed provider auth.
 
 # --- Optional role files -----------------------------------------------------
-# Codex 0.134.0+ no longer reads [profiles.<name>] from config.toml.
-# If CLI profile switching is available, create separate user-level files:
+# Codex 0.134.0+ no longer reads [profiles.<name>] from config.toml. If profile
+# switching is available in your surface, create separate global profile files:
 #
 # ~/.codex/orchestrator.config.toml
 # model                  = "gpt-5.4"
