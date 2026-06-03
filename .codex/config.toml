@@ -1,0 +1,56 @@
+# OpenAI Codex CLI provider + model configuration for the Polestar Playbox.
+#
+# Mirror of .kilo/kilo.jsonc: same APIM gateway, same Azure-deployed models,
+# same per-role routing. Kilo expresses roles as `profiles`; Codex expresses
+# them as [profiles.*] selected with `codex --profile <role>`.
+#
+# This file ships PLACEHOLDERS ONLY. The verified, working APIM host + key live
+# in your DevPod's harness config and are injected at runtime.
+# DO NOT commit a real APIM hostname or key here.
+#
+# Codex does NOT interpolate ${ENV} inside base_url (unlike Kilo's baseUrl), so
+# the resource base is a literal placeholder the DevPod harness rewrites.
+# Targets APIM operation: POST .../openai/v1/responses
+
+# --- Default == kilo's primary role (orchestrator) ---------------------------
+model                  = "gpt-5.4"
+model_provider         = "playbox-apim"
+model_reasoning_effort = "high"
+
+approval_policy = "on-request"
+sandbox_mode    = "workspace-write"
+
+# --- Provider == kilo.jsonc provider (id: playbox-apim) ----------------------
+# Resource base WITHOUT the /openai suffix is AZURE_OPENAI_ENDPOINT in .env;
+# the /openai suffix is appended here, matching kilo.jsonc's baseUrl.
+# APIM does not enforce a subscription key, so no env_key is set.
+[model_providers.playbox-apim]
+name         = "Polestar Playbox (Azure OpenAI via APIM)"
+base_url     = "https://<your-playbox-apim-endpoint>/playbox-ai-deployment/openai"
+wire_api     = "responses"
+query_params = { "api-version" = "2025-04-01-preview" }
+
+# --- One profile per role == kilo.jsonc "profiles" ---------------------------
+# Codex has no per-model `limit` (context/output caps) or `fallback`, so those
+# kilo fields have no equivalent here — capabilities are discovered at runtime.
+[profiles.orchestrator]
+model                  = "gpt-5.4"
+model_provider         = "playbox-apim"
+model_reasoning_effort = "high"
+
+[profiles.everyday-dev]
+model                  = "gpt-5-mini"
+model_provider         = "playbox-apim"
+model_reasoning_effort = "low"
+
+[profiles.summarizer]
+model                  = "gpt-5-nano"
+model_provider         = "playbox-apim"
+model_reasoning_effort = "minimal"
+
+[profiles.react-frontend]
+# Kilo escalates to gpt-5-mini via `fallback`; Codex has no fallback —
+# switch to the everyday-dev profile manually when more reasoning is needed.
+model                  = "gpt-5.2"
+model_provider         = "playbox-apim"
+model_reasoning_effort = "low"

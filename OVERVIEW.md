@@ -1,14 +1,14 @@
 ---
 created: 2026-05-13
-updated: 2026-05-31
+updated: 2026-06-03
 description: Overview of the Try-an-LLM task for the Polestar Playbox
 ---
 # SYSTEM HANDOVER CONTEXT: POLESTAR PLAYBOX TEMPLATE PROJECT
 
 > [!note] Reconciled 2026-05-31
 > This brief was originally drafted around Roo Code (`.roo/` / `.ai/`). It has been reconciled
-> to the locked project decisions: **Kilo Code is the only agent config scaffolded** (`.kilo/`),
-> with Cline and Codex documented as supported alternatives; **role files live in `.kilo/agents/`**
+> to the locked project decisions: **Kilo Code and OpenAI Codex are the scaffolded agent configs** (`.kilo/`, `.codex/`),
+> with Cline documented as a supported alternative; **role files live in `.kilo/agents/`**
 > (Kilo renamed Roo "custom modes" → "agents"); `gpt-5.4` is treated as a **reasoning model**
 > with per-role output limits per [ADR-0001](docs/adr/ADR-0001.md); Python tooling is **`uv` / `pyproject.toml`** (no
 > `requirements.txt`). The on-disk scaffold lives at `workspace/playbox-try-an-llm/` and is
