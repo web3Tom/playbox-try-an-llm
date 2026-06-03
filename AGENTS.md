@@ -45,10 +45,9 @@ as supported alternatives only.
 playbox-try-an-llm/
 ├── .kilo/                  -> Kilo Code agent config (the only scaffolded agent surface)
 │   ├── agents/             -> per-role definitions, each pinned to a model
-│   │   ├── orchestrator.md     -> gpt-5.4 (planning/delegation, reasoning)
-│   │   ├── everyday-dev.md     -> gpt-5-mini (workhorse)
-│   │   ├── summarizer.md       -> gpt-5-nano
-│   │   └── react-frontend.md   -> gpt-5.2 (fallback gpt-5-mini)
+│   │   ├── doc-writer.md       -> gpt-5-mini (markdown/docs only)
+│   │   ├── react-frontend.md   -> gpt-5.2 (variant: high for complex logic)
+│   │   └── summarizer.md       -> gpt-5-nano
 │   ├── rules/              -> always-on global rules (general.md)
 │   ├── skills/             -> deterministic tool definitions (SWE-agent / agent-skills patterns)
 │   ├── commands/           -> reusable slash commands
@@ -80,7 +79,8 @@ playbox-try-an-llm/
 |------|-----|------|
 | Multi-step planning / orchestration | `gpt-5.4` (reasoning) | High cost — route sparingly |
 | Everyday dev / coding (workhorse) | `gpt-5-mini` | Default for routine implementation |
-| UI / frontend work | `gpt-5.2` | Fallback `gpt-5-mini` for harder reasoning |
+| UI / frontend work | `gpt-5.2` (variant: high) | Escalate to Plan agent for complex logic |
+| Documentation / markdown edits | `gpt-5-mini` | Routine doc updates |
 | Summarization / quick classification | `gpt-5-nano` | Lowest latency / cost |
 | Audio / transcription demo | `gpt-4o-transcribe-diarize` | Specialized audio / diarization model |
 | RAG / embeddings demo | `text-embedding-3-large` | Retrieval embeddings |

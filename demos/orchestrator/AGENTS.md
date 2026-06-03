@@ -29,15 +29,15 @@ Run from the **repo root** — `read_spec()` defaults to the path `demos/orchest
 <!-- AGENTS-GENERATED:END commands -->
 
 ## Routing lesson (why this demo exists)
-This is the canonical case for the `orchestrator` role.
+This is the canonical case for the `plan` agent.
 
 | Job | Role / model | Why |
 |-----|--------------|-----|
-| Read the spec, produce the plan | `orchestrator` → `gpt-5.4` (reasoning) | Planning is the *only* job worth the reasoning premium |
-| Implement from the plan | `everyday-dev` → `gpt-5-mini` | Mechanical translation of an existing plan — the workhorse handles it |
+| Read the spec, produce the plan | `plan` → `gpt-5.4` (reasoning) | Planning is the *only* job worth the reasoning premium |
+| Implement from the plan | `code` → `gpt-5-mini` | Mechanical translation of an existing plan — the workhorse handles it |
 
 The point: **don't run the whole pipeline on `gpt-5.4`.** Use it for the plan, then delegate. See
-the root `AGENTS.md` Heuristics table and `.kilo/agents/orchestrator.md` for the role definition.
+the root `AGENTS.md` Heuristics table and `.kilo/kilo.jsonc` for the Plan agent definition.
 
 <!-- AGENTS-GENERATED:START code-style -->
 ## Code style
@@ -53,4 +53,4 @@ the root `AGENTS.md` Heuristics table and `.kilo/agents/orchestrator.md` for the
 
 ## When stuck
 - Empty/blank plan output → the `gpt-5.4` output cap; reasoning tokens share the budget (see `docs/adr/ADR-0001.md`).
-- Root conventions: repo-root `AGENTS.md`. Role + limits: `.kilo/agents/orchestrator.md`, `.kilo/kilo.jsonc`.
+- Root conventions: repo-root `AGENTS.md`. Plan agent config: `.kilo/kilo.jsonc`.

@@ -65,10 +65,10 @@ The dashboard port (5174) is pre-forwarded in `devfile.yaml`.
 | Enumerate files, merge graph | *no model* — Python | Deterministic transforms stay in code |
 | Scan (project description) | `summarizer` → `gpt-5-nano` | Cheap, classification-grade summarization |
 | Select files to analyze | `summarizer` → `gpt-5-nano` | When candidates exceed the budget, "which files matter" is a judgment call — cheap triage over paths only, with a deterministic fallback if it errors. Deterministic guards (generated-file skip, per-dir cap) do the rote filtering first |
-| Analyze each file (the bulk) | `everyday-dev` → `gpt-5-mini` | High-volume workhorse — runs once per file (concurrently), never the orchestrator. The same call also returns the file's functions/classes **and their call/inheritance names**, so members and member edges cost no extra request |
-| Classify architecture | `orchestrator` → `gpt-5.4` | Whole-project reasoning earns the expensive model |
-| Describe from code (fallback) | `summarizer` → `gpt-5-nano` | Only runs when the README was uninformative — infers the project description from the analyzed file summaries (summarizing summaries is classification-grade) |
-| Build guided tour | `orchestrator` → `gpt-5.4` | Designing a reading order is the same whole-project judgment, so it shares the orchestrator route |
+| Analyze each file (the bulk) | `code` → `gpt-5-mini` | High-volume workhorse — runs once per file (concurrently), never the Plan agent. The same call also returns the file's functions/classes **and their call/inheritance names**, so members and member edges cost no extra request |
+| Classify architecture | `plan` → `gpt-5.4` | Whole-project reasoning earns the expensive model |
+| Describe from code (deterministic fallback) | `summarizer` → `gpt-5-nano` | Only runs when the README was uninformative — infers the project description from the analyzed file summaries (summarizing summaries is classification-grade) |
+| Build guided tour | `plan` → `gpt-5.4` | Designing a reading order is the same whole-project judgment, so it shares the Plan agent route |
 
 The lesson in one line: **the expensive model runs only for whole-project
 reasoning (architecture + tour); the cheap model runs often; the deterministic

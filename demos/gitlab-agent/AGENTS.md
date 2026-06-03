@@ -35,7 +35,7 @@ Required env vars (from `.env`):
 | Job | Role / model | Why |
 |-----|--------------|-----|
 | Fetch issues (HTTP) | *no model* — plain `httpx` | A status code already answers it; deterministic work stays in code |
-| Summarize the issue list | `everyday-dev` → `gpt-5-mini` | Summarization is the genuine judgment call — the workhorse is the right fit |
+| Summarize the issue list | `code` → `gpt-5-mini` | Summarization is the genuine judgment call — the workhorse is the right fit |
 
 Do **not** route summarization to `gpt-5.4`: there is no multi-step reasoning here. If you only need
 one-line classification of each issue, `gpt-5-nano` (`summarizer` role) is cheaper still.
@@ -55,4 +55,4 @@ one-line classification of each issue, `gpt-5-nano` (`summarizer` role) is cheap
 
 ## When stuck
 - `401/403` → PAT scope or `GITLAB_PROJECT_ID`. `404` → wrong `GITLAB_API_URL`.
-- Root conventions: repo-root `AGENTS.md`. Role + limits: `.kilo/agents/everyday-dev.md`, `.kilo/kilo.jsonc`.
+- Root conventions: repo-root `AGENTS.md`. Code agent config: `.kilo/kilo.jsonc`.

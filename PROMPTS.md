@@ -36,6 +36,6 @@ prompt notes the **model to route to**, because picking the right model is the w
 >
 > [Paste code here]
 
-### 6. Plan, then delegate — *start on `gpt-5.4`, delegate down*
-> Act as the Orchestrator (`.kilo/agents/orchestrator.md`). Read `demos/orchestrator/spec.md`,
-> produce a numbered plan, and for step 1 delegate the code generation to `gpt-5-mini`.
+### 6. Plan, then delegate — *start on Plan agent (`gpt-5.4`), delegate down*
+> Route to the Plan agent. Read `demos/orchestrator/spec.md`,
+> produce a numbered plan, and delegate implementation steps to the Code agent (`gpt-5-mini`).

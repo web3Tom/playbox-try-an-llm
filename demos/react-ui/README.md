@@ -2,7 +2,7 @@
 
 ## Overview
 
-A minimalist React + Vite frontend demo showcasing the **Polestar Playbox model routing reference**. This app demonstrates basic React patterns (hooks, state, side effects, component composition) and is governed by the **Kilo Code `react-frontend` role** (gpt-5.2, fallback gpt-5-mini).
+A minimalist React + Vite frontend demo showcasing the **Polestar Playbox model routing reference**. This app demonstrates basic React patterns (hooks, state, side effects, component composition) and is governed by the **Kilo Code `react-frontend` role** (gpt-5.2, variant: high for complex logic).
 
 **Goal:** Serve as a working template for rapid frontend iteration in the Polestar enterprise agentic automation reference.
 
@@ -70,9 +70,10 @@ demos/react-ui/
 
 To add features (e.g., filter by task, copy model name, add description popovers):
 
-1. Invoke the **Kilo Code `react-frontend` role** (gpt-5.2, fallback gpt-5-mini).
+1. Invoke the **Kilo Code `react-frontend` role** (gpt-5.2, variant: high).
 2. Describe the new feature in natural language.
 3. The role generates or modifies components; you review & iterate.
+4. For complex logic, escalate to the Plan agent (gpt-5.4).
 
 **Example prompt:**
 > Add a search filter to the routing table so users can filter by task name. Debounce the input and highlight matches in the task column.

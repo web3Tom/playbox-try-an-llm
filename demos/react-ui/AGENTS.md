@@ -39,12 +39,13 @@ No env vars, no secrets — entirely static.
 ## Routing lesson (why this demo exists)
 | Job | Role / model | Why |
 |-----|--------------|-----|
-| Build/extend components, styling, hooks | `react-frontend` → `gpt-5.2` | Capable and cheaper than the orchestrator for routine UI |
-| Trickier component logic | fallback → `gpt-5-mini` | Deliberate escalation when reasoning is needed |
+| Build/extend components, styling, hooks | `react-frontend` → `gpt-5.2` | Capable and cheaper than the Plan agent for routine UI |
+| Trickier component logic | variant: high or escalate to Plan | Escalation to Plan agent (gpt-5.4) for complex reasoning |
 
 The lesson: **do not route a theme toggle to `gpt-5.4`.** Spending reasoning tokens on routine UI is
 exactly the waste this template teaches against. Invoke the role with `@react-frontend …`; Kilo reads
-`.kilo/agents/react-frontend.md`, loads the global rules, and routes to `gpt-5.2`.
+`.kilo/agents/react-frontend.md`, loads the global rules, and routes to `gpt-5.2`. For hard cases,
+escalate to the Plan agent.
 
 <!-- AGENTS-GENERATED:START code-style -->
 ## Code style

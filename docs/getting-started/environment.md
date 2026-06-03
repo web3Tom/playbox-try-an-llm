@@ -83,9 +83,9 @@ All Kilo Code configuration is in `.kilo/`:
 ```
 .kilo/
 ├── agents/               # Role definitions (each pins one model)
-│   ├── orchestrator.md
-│   ├── developer.md
+│   ├── doc-writer.md
 │   ├── react-frontend.md
+│   ├── summarizer.md
 │   └── ...
 ├── rules/                # Global, always-on rules
 ├── skills/               # Reusable task patterns

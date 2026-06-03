@@ -7,9 +7,8 @@ The Playbox treats agent configuration as **declarative, version-controlled code
 ```
 .kilo/
 ├── agents/
-│   ├── orchestrator.md          # Planner role (gpt-5.4)
-│   ├── everyday-dev.md          # Everyday coding (gpt-5-mini)
-│   ├── react-frontend.md        # React scaffold role (gpt-5.2, fallback gpt-5-mini)
+│   ├── doc-writer.md            # Documentation role (gpt-5-mini)
+│   ├── react-frontend.md        # React scaffold role (gpt-5.2, variant: high)
 │   ├── summarizer.md            # Quick classification (gpt-5-nano)
 │   └── ...
 ├── rules/
@@ -38,46 +37,39 @@ Each file in `.kilo/agents/` defines a role by:
 3. **Linking global rules** (which rules apply to this role)
 4. **Indicating skill availability** (which domain skills are available)
 
-### Example: Orchestrator Role
+### Example: Plan Agent (Built-in Override)
 
 ```markdown
-# Orchestrator
+# Plan Agent
 
-Model: gpt-5.4
+Model: gpt-5.4 (reasoning model)
 
 ## Purpose
-You are the orchestrator: you receive high-level requests, reason about
-decomposition, and delegate subtasks to specialized agents (developer,
-summarizer, etc.). You do not implement directly.
+You receive high-level requests, reason about decomposition, and delegate
+subtasks to specialized agents (Code, React Frontend, etc.). You do not implement
+directly — you design and coordinate.
 
 ## When to Use
 - Complex planning and architecture decisions
 - Multi-step feature planning
 - Choosing which specialist agent to invoke next
-
-## Always-On Rules
-- rules/git-workflow.md
-- rules/testing.md
-- rules/security.md
-
-## Available Skills
-- skills/prompt-library.md
+- Escalation when a specialist needs deeper reasoning
 
 ## Cost Notes
 gpt-5.4 is expensive and uses reasoning tokens. Use this role sparingly
-for orchestration only. Route everyday coding to the developer role.
+for planning only. Route everyday coding to the Code agent.
 ```
 
-### Example: Developer Role
+### Example: Code Agent (Built-in Default)
 
 ```markdown
-# Developer
+# Code Agent
 
 Model: gpt-5-mini
 
 ## Purpose
 You implement features, write tests, fix bugs, and refactor code.
-You work within the scope defined by the orchestrator's plan.
+You work within the scope defined by the Plan agent's design.
 
 ## When to Use
 - Feature implementation
@@ -85,14 +77,9 @@ You work within the scope defined by the orchestrator's plan.
 - Code review and refactoring
 - Writing tests
 
-## Always-On Rules
-- rules/coding-style.md
-- rules/git-workflow.md
-- rules/testing.md
-- rules/security.md
-
-## Available Skills
-- skills/prompt-library.md
+## Escalation
+For complex architectural decisions or multi-step reasoning, hand back to
+the Plan agent rather than reaching for the expensive route yourself.
 ```
 
 ## Global Rules
@@ -136,16 +123,15 @@ The `.kilo/kilo.jsonc` file maps logical model names to your Azure OpenAI deploy
 }
 ```
 
-At startup, Kilo Code verifies that each deployment name resolves to a live endpoint. A role can
-also declare a deliberate fallback — a second model to escalate to (the `react-frontend` role uses
-`gpt-5.2` with a `gpt-5-mini` fallback):
+At startup, Kilo Code verifies that each deployment name resolves to a live endpoint. A role can specify a reasoning variant for deeper analysis (the `react-frontend` role uses
+`gpt-5.2` with `variant: high` for complex logic):
 
 ```jsonc
 {
-  "profiles": {
+  "agent": {
     "react-frontend": {
       "model": "gpt-5.2",
-      "fallback": "gpt-5-mini"
+      "variant": "high"
     }
   }
 }
@@ -158,8 +144,8 @@ also declare a deliberate fallback — a second model to escalate to (the `react
 1. Open Kilo Code panel in VSCode
 2. Type your task or question
 3. **Select an agent role** (dropdown or inline mention)
-   - E.g., `@orchestrator Plan a React component refactor`
-   - E.g., `@developer Implement the dashboard fix`
+   - E.g., `@plan Design a React component refactor`
+   - E.g., `@code Implement the dashboard fix`
 4. Kilo Code reads the role file, loads global rules and skills, and routes to the pinned model
 5. Review the model's response, approve code changes and commands
 
@@ -168,8 +154,8 @@ also declare a deliberate fallback — a second model to escalate to (the `react
 Some organizations expose Kilo Code via CLI:
 
 ```bash
-kilo --agent orchestrator --task "Plan the data analysis pipeline"
-kilo --agent developer --task "Implement the GitLab API integration"
+kilo --agent plan --task "Design the data analysis pipeline"
+kilo --agent code --task "Implement the GitLab API integration"
 ```
 
 (Exact CLI varies by your org's Kilo Code setup.)
@@ -180,9 +166,9 @@ This structure enforces a key principle: **each agent role has one model**.
 
 Why?
 - **Predictability** — you know which model will run (no surprise expensive calls)
-- **Cost control** — gpt-5.4 is routed only to orchestrator; everyday work uses gpt-5-mini
+- **Cost control** — gpt-5.4 is routed only to Plan agent; everyday work uses gpt-5-mini
 - **Auditability** — commit history shows who changed which agent's model assignment
-- **Testability** — you can swap a role's model (e.g., developer: gpt-5.4 → gpt-5.2) and re-run the same workflow
+- **Testability** — you can swap a role's model (e.g., code: gpt-5-mini → gpt-5.2) and re-run the same workflow
 
 Never default everything to gpt-5.4. Read [Models & Routing](../models.md) for the full decision matrix.
 

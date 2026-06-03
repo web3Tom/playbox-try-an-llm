@@ -23,7 +23,7 @@ These task-specific models are also live:
 
 | Model | Capability | Use Case |
 |-------|-----------|----------|
-| `gpt-5-mini` | Fast reasoning + cost savings | The everyday-dev workhorse |
+| `gpt-5-mini` | Fast reasoning + cost savings | The default Code agent workhorse |
 | `gpt-5-nano` | Ultra-fast, lowest cost | Summarization, quick classification |
 | `gpt-4o-transcribe-diarize` | Audio transcription with speaker tracking | The transcription demo |
 | `text-embedding-3-large` | High-dimensional embeddings | RAG with semantic search |
@@ -34,10 +34,11 @@ These task-specific models are also live:
 
 | Task Type | Primary Model | Reasoning | Cost |
 |-----------|---------------|-----------|------|
-| **Orchestration, Planning** | gpt-5.4 | Reasoning model; breaks down complex problems | High |
-| **Feature Implementation** | gpt-5-mini | Fast coding, still strong at logic | Medium |
+| **Orchestration, Planning** | gpt-5.4 (Plan agent) | Reasoning model; breaks down complex problems | High |
+| **Feature Implementation** | gpt-5-mini (Code agent) | Fast coding, still strong at logic | Medium |
 | **Bug Fixes, Code Review** | gpt-5.2 | Balanced speed and reasoning | Medium-High |
-| **UI / Frontend Work** | gpt-5.2 (fallback gpt-5-mini) | Component generation; escalate for complex logic | Medium |
+| **UI / Frontend Work** | gpt-5.2 (variant: high) | Component generation; escalate to Plan for complex logic | Medium |
+| **Documentation** | gpt-5-mini | Fast doc updates | Low |
 | **Quick Classification** | gpt-5-nano | Fast summarization, no deep reasoning needed | Low |
 | **General Chat, Exploration** | gpt-5 | Conversational, exploratory | Low-Medium |
 | **Images, Charts, Mockups** | gpt-4o | Sees visual context; generates designs | Medium |
@@ -78,31 +79,31 @@ Use gpt-5.4 for everything (too expensive, overkill for summarization).
 
 **Right approach:**
 
-1. **Orchestrator (gpt-5.4)** — "Plan the steps to summarize and prioritize issues"
+1. **Plan agent (gpt-5.4)** — "Plan the steps to summarize and prioritize issues"
    - Output: Breakdown of the task, team categories, prioritization criteria
    - Cost: High, but only runs once
 
-2. **Developer (gpt-5-mini)** — "Fetch issues from GitLab and group by team"
+2. **Code agent (gpt-5-mini)** — "Fetch issues from GitLab and group by team"
    - Output: Python code using the GitLab API
    - Cost: Medium, efficient implementation
 
-3. **Summarizer (gpt-5-nano)** — "Summarize each issue group and extract priorities"
+3. **Summarizer agent (gpt-5-nano)** — "Summarize each issue group and extract priorities"
    - Output: Summary text, bullet-point priorities
    - Cost: Low, fast classification
 
 **Total cost:** ~70% less than routing all to gpt-5.4, **same result**.
 
-## Deliberate Fallbacks
+## Reasoning Variants
 
-A role can define a deliberate fallback — a second model to escalate to when the primary
-isn't the right fit. The `react-frontend` role uses this: `gpt-5.2` by default, escalating to
-`gpt-5-mini` for harder reasoning.
+A role can specify a reasoning variant for deeper analysis when the primary model needs it.
+The `react-frontend` role uses `variant: high` for complex logic, which adds extra reasoning
+effort. If still insufficient, escalate to the Plan agent.
 
 ```jsonc
 // In .kilo/kilo.jsonc
 "react-frontend": {
   "model": "gpt-5.2",
-  "fallback": "gpt-5-mini"
+  "variant": "high"
 }
 ```
 

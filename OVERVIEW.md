@@ -104,10 +104,9 @@ The repository is scaffolded according to the following structure to support the
 polestar-playbox-template/
 ├── .kilo/                      # Agent Configuration (Kilo Code)
 │   ├── agents/                 # Per-role definitions, each pinned to a model
-│   │   ├── orchestrator.md     # -> gpt-5.4 (reasoning; planning/delegation)
-│   │   ├── everyday-dev.md     # -> gpt-5-mini (workhorse)
-│   │   ├── summarizer.md       # -> gpt-5-nano
-│   │   └── react-frontend.md   # -> gpt-5.2 (fallback gpt-5-mini)
+│   │   ├── doc-writer.md       # -> gpt-5-mini (markdown/docs)
+│   │   ├── react-frontend.md   # -> gpt-5.2 (variant: high for complex logic)
+│   │   └── summarizer.md       # -> gpt-5-nano
 │   ├── rules/                  # Always-on global rules (general.md)
 │   ├── skills/                 # Custom tool definitions
 │   ├── commands/               # Reusable slash commands
@@ -201,7 +200,7 @@ The development of this epic will be tracked via the following sub-issues:
 
 1. Create a `.kilo/` directory structure containing `agents/`, `rules/`, `skills/`, `commands/`, and the `kilo.jsonc` provider config.
 
-2. Create specialized agent role files in `.kilo/agents/`: `orchestrator.md` (gpt-5.4), `everyday-dev.md` (gpt-5-mini/5.2), and `summarizer.md` (gpt-5-nano).
+2. Create specialized agent role files in `.kilo/agents/`: `doc-writer.md` (gpt-5-mini), `react-frontend.md` (gpt-5.2), and `summarizer.md` (gpt-5-nano). Built-in `code` and `plan` agents override defaults in `.kilo/kilo.jsonc`.
 
 3. Draft a global `.kilo/system_prompt.md` enforcing Playbox network constraints.
 
@@ -440,22 +439,12 @@ echo "Initialization complete. Open PROMPTS.md to begin."
 ##### 2. AI Agent Configuration (.kilo/)
 We use the `.kilo/` structure. Roles live in `.kilo/agents/` (Kilo's term for Roo's "custom modes"), each optimized for one of the available GPT-5 models.
 
-**`.kilo/agents/orchestrator.md`** (Optimized for gpt-5.4 — reasoning model)
-```markdown
-# Role: Orchestrator
-You are the Lead Technical Project Manager. Your job is to break down complex tasks into smaller, executable steps.
-You MUST prioritize using the `gpt-5.4` model for planning. It is a reasoning model — reserve it for genuine planning, not routine code generation.
-When you need to generate code, delegate the task to a specific sub-agent (e.g., the React Frontend role) and instruct them to use `gpt-5.2` or `gpt-5-mini` to save tokens.
-Always review the output of your sub-agents before declaring a task complete.
-```
-
-**`.kilo/agents/react-frontend.md`** (Optimized for gpt-5.2 or gpt-5-mini)
+**`.kilo/agents/react-frontend.md`** (Optimized for gpt-5.2 with variant: high)
 ```markdown
 # Role: React Frontend Developer
 You are an expert ReactJS developer. You focus on building clean, responsive UI components.
-Use the `gpt-5.2` model for rapid UI iterations (fallback `gpt-5-mini` for harder reasoning).
+Use the `gpt-5.2` model for rapid UI iterations. For complex logic or state management, escalate to the Plan agent (gpt-5.4).
 Always prefer functional components and React Hooks.
-If you need complex logic or state management, you may request the user to switch to `gpt-5.4`.
 ```
 
 **`.kilo/agents/summarizer.md`** (Optimized for gpt-5-nano)
@@ -491,14 +480,14 @@ In Kilo Code, switch agents or reference a role file in your prompt. For example
 
 **`demos/orchestrator/README.md`**
 ```markdown
-# Demo 1: The Orchestrator
+# Demo 1: Planning & Delegation
 
 **Goal:** Learn how to use a highly capable reasoning model (`gpt-5.4`) to plan a task, and delegate the execution to smaller models.
 
 1. Open Kilo Code.
-2. Select the `gpt-5.4` model (orchestrator role).
+2. Select the `plan` agent (gpt-5.4).
 3. Paste this prompt:
-   > "Act as the Orchestrator (@.kilo/agents/orchestrator.md). Read `demos/orchestrator/spec.md`. Create a step-by-step plan. For step 1, ask me to switch to the `gpt-5-mini` model before you generate the code."
+   > "Plan the workflow in `demos/orchestrator/spec.md`. Create a step-by-step plan, then delegate implementation to the Code agent."
 ```
 
 **`demos/orchestrator/spec.md`**
@@ -514,9 +503,9 @@ Project: Build a simple Python script that reads a CSV file of names and outputs
 
 *Note: A basic React app (e.g., via Vite) should be scaffolded in this directory.*
 
-1. Open Kilo Code and select `gpt-5-mini`.
+1. Open Kilo Code and select the `react-frontend` agent (gpt-5.2).
 2. Paste this prompt:
-   > "Act as the Frontend Dev (@.kilo/agents/react-frontend.md). Start the local development server in the `demos/react-ui` directory. Then, modify `App.jsx` to include a button that toggles between dark mode and light mode."
+   > "Invoke the react-frontend agent. Start the local development server in the `demos/react-ui` directory. Then, modify `App.jsx` to include a button that toggles between dark mode and light mode."
 ```
 
 **`demos/transcription/transcribe.py`**

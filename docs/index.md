@@ -18,7 +18,7 @@ The Playbox teaches three interconnected concepts:
 
 ### 1. Agent Configuration as Code
 Your agents live in `.kilo/` — role definitions, model assignments, global rules, and skills. This declarative approach means:
-- Every role pins one model (e.g., `orchestrator → gpt-5.4`, `developer → gpt-5-mini`)
+- Every role pins one model (e.g., `plan → gpt-5.4`, `code → gpt-5-mini`)
 - Global rules apply consistently across all agent invocations
 - You version-control your agent behavior just like code
 - See [Agents as Code](getting-started/agents.md) for the structure
@@ -35,7 +35,7 @@ Learn routing patterns in [Models & Routing](models.md); see them in action acro
 ### 3. Show-Don't-Tell Executable Demos
 Six runnable examples cover:
 - **Codebase Analyzer** — multi-stage pipeline that maps a repo into an interactive graph
-- **Orchestrator** — reasoning model plans, coding model executes
+- **Planning & Delegation** — Plan agent reasons and delegates to Code agent for execution
 - **GitLab Integration** — read and summarize issues via PAT
 - **RAG + Embeddings** — retrieval-augmented generation with in-memory store
 - **Audio Transcription** — multimodal transcription and diarization
@@ -49,7 +49,7 @@ Each demo emphasizes the routing decision and demonstrates a real-world pattern.
 Start with the **PROMPTS** library (`PROMPTS.md`) — copy-paste a prompt into the Kilo Code chat to see the models in action and learn how to prompt each one effectively.
 
 ### For Developers & Engineers
-Jump to [Getting Started](getting-started/environment.md) to set up your environment, then explore the demos in order. The routing lessons are essential background before you use the orchestrator or extend the agent system.
+Jump to [Getting Started](getting-started/environment.md) to set up your environment, then explore the demos in order. The routing lessons are essential background before you use the Plan agent or extend the agent system.
 
 ## Next Steps
 

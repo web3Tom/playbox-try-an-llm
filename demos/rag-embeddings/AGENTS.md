@@ -34,7 +34,7 @@ Requires `chromadb` (`uv add chromadb` if the import fails).
 |-----|--------------|-----|
 | Embed docs + query | `text-embedding-3-large` | A specialized *embeddings* route — not a chat model |
 | Retrieve (cosine top-1) | *no model* — ChromaDB | Vector math is deterministic; never ask an LLM to "rank" |
-| Answer from context | `everyday-dev` → `gpt-5-mini` | Grounded generation is the judgment call |
+| Answer from context | `code` → `gpt-5-mini` | Grounded generation is the judgment call |
 
 The lesson: a RAG pipeline mixes **three** routes. Don't collapse them onto one expensive model.
 
@@ -53,4 +53,4 @@ The lesson: a RAG pipeline mixes **three** routes. Don't collapse them onto one 
 
 ## When stuck
 - Irrelevant answers → embedding model mismatch or too few `n_results`. Empty retrieval is handled and logged.
-- Root conventions: repo-root `AGENTS.md`. Role + limits: `.kilo/agents/everyday-dev.md`, `.kilo/kilo.jsonc`.
+- Root conventions: repo-root `AGENTS.md`. Code agent config: `.kilo/kilo.jsonc`.

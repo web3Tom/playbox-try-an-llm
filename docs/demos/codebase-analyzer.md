@@ -13,9 +13,9 @@ A standalone Python script (not a Kilo skill) runs the pipeline below, each stag
 | Select | rank candidate files by significance, keep the most important (deterministic fallback) | `gpt-5-nano` |
 | Analyze each file | per-file summary, tags, import edges, top-level functions/classes, and the `calls`/`inherits` between them | `gpt-5-mini` |
 | Merge graph | deduplicate nodes, prune dangling edges | *no model* |
-| Classify architecture | group files into layers | `gpt-5.4` |
+| Classify architecture | group files into layers | `gpt-5.4` (Plan agent) |
 | Describe from code | *(only if the README was uninformative)* infer the description from file summaries | `gpt-5-nano` |
-| Build guided tour | ordered, file-anchored reading path | `gpt-5.4` |
+| Build guided tour | ordered, file-anchored reading path | `gpt-5.4` (Plan agent) |
 
 One run exercises **nano → mini → gpt-5.4 → pure code**. The expensive model runs only for the two steps that need whole-project reasoning (layer classification and the guided tour); everything else routes cheaper or to plain code. The per-file analyze stage runs **concurrently** (a small, bounded pool — capped to respect the APIM rate limit), and the function/class **call graph is derived from the same per-file response**, so it adds no API requests.
 
@@ -55,8 +55,8 @@ This demo is the template's thesis in one pipeline:
 
 - **Enumerating files and merging the graph are deterministic** — they run in plain Python, no model. A file walk, a generated-file filter, a per-directory cap, or a dedup is not a judgment call.
 - **Choosing *which* files to read, when there are too many, IS a judgment call** — so the `select` stage spends a cheap `gpt-5-nano` call on it (with a deterministic fallback), rather than letting a flood of migrations crowd out the real code.
-- **The per-file analysis is high-volume**, so it runs on the `gpt-5-mini` workhorse — never the orchestrator, even though it executes once per file.
-- **Classifying architecture and designing the guided tour need to see the whole project at once** — genuine multi-file reasoning — so those two stages earn `gpt-5.4`.
+- **The per-file analysis is high-volume**, so it runs on the `gpt-5-mini` workhorse — never the Plan agent, even though it executes once per file.
+- **Classifying architecture and designing the guided tour need to see the whole project at once** — genuine multi-file reasoning — so those two stages use the Plan agent (`gpt-5.4`).
 - **The member call graph is free**: the analyze call already returns each member's call/inheritance names, so a deterministic post-pass turns them into edges with no extra requests.
 
 The expensive model runs only for whole-project reasoning; the cheap model runs often; the deterministic work runs for free.

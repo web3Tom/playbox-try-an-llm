@@ -5,10 +5,11 @@ Integrate with **internal GitLab APIs** to read issues, summarize them, and cate
 ## What It Does
 
 This demo:
-1. Fetches open issues from your GitLab project (via PAT authentication)
-2. Sends each issue to **gpt-5-mini** for summarization and priority tagging
-3. Groups issues by priority (Critical, High, Medium, Low)
-4. Outputs a **summary report** you can share with the team
+1. Authenticates with GitLab via PAT
+2. Fetches open issues from your project
+3. Sends each issue to **gpt-5-mini** (Code agent) for summarization and priority tagging
+4. Groups issues by priority (Critical, High, Medium, Low)
+5. Outputs a **summary report** you can share with the team
 
 ### Example Report Output
 
@@ -61,14 +62,14 @@ Before running, ensure your `.env` has:
 ## How to Run
 
 ```bash
-uv run python demos/gitlab-agent/main.py
+uv run python demos/gitlab-agent/review_issues.py
 ```
 
 The script will:
 1. Authenticate using `GITLAB_PAT`
 2. Fetch all open issues in project `GITLAB_PROJECT_ID`
-3. Send each to gpt-5-mini for summarization (in parallel batches)
-4. Save the report to `output_gitlab_summary.md`
+3. Send each to the Code agent (gpt-5-mini) for summarization (in parallel batches)
+4. Print a summary report to the console
 
 ### Sample Execution
 
@@ -92,11 +93,8 @@ Total cost: ~1 credit (gpt-5-mini, parallelized)
 
 ```
 demos/gitlab-agent/
-├── main.py                  # Entry point
-├── gitlab_client.py         # GitLab API wrapper (PAT auth)
-├── summarizer.py            # gpt-5-mini summarization logic
-├── report_generator.py      # Markdown report formatting
-└── config.py                # Env var loading
+├── review_issues.py         # Entry point: fetch + summarize
+└── README.md                # Walkthrough
 ```
 
 ## The Routing Lesson
@@ -107,8 +105,8 @@ This demo shows **why gpt-5-nano or gpt-5-mini is perfect for summarization**:
 - Reasoning is not needed (no decomposition or complex logic)
 - Cost savings are dramatic: gpt-5.4 would cost 50× more and add 30s latency
 
-**Avoid:** Using gpt-5.4 to summarize all issues (expensive, slow).
-**Prefer:** gpt-5-mini in parallel batches (fast, cheap, same quality).
+**Avoid:** Using the Plan agent (gpt-5.4) to summarize all issues (expensive, slow).
+**Prefer:** Code agent (gpt-5-mini) in parallel batches (fast, cheap, same quality).
 
 ## Network Isolation
 
@@ -116,13 +114,11 @@ Remember: your DevPod can **only** reach internal GitLab and your whitelisted Az
 
 ## Extending This Demo
 
-To integrate with a different issue tracker (Jira, Azure DevOps):
+To extend the demo:
 
-1. Create a new client in `demos/gitlab-agent/` (e.g., `jira_client.py`)
-2. Implement the same interface: `fetch_issues()` → returns a list of dicts
-3. Update `main.py` to use your new client
-
-The summarizer and report generator remain unchanged.
+1. Edit `demos/gitlab-agent/review_issues.py` to add filtering or grouping
+2. Extend the summarization prompt in the system prompt
+3. Re-run the demo with your changes
 
 ---
 
