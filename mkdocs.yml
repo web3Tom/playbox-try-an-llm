@@ -23,7 +23,9 @@ nav:
     - RAG with Embeddings: demos/rag-embeddings.md
     - Audio Transcription: demos/transcription.md
     - React UI Generation: demos/react-ui.md
-  - Decisions: adr/ADR-0001.md
+  - Decisions:
+    - "ADR-0001: Output & Context Limits": adr/ADR-0001.md
+    - "ADR-0002: Image Attachment & OCR Strategy": adr/ADR-0002.md
 
 markdown_extensions:
   - pymdownx.superfences
